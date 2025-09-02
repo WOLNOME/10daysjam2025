@@ -144,6 +144,5 @@ void MyGame::Draw() {
 	GPUDescriptorManager::GetInstance()->TransferEnable();
 	RTVManager::GetInstance()->TransferEnable();
 	DSVManager::GetInstance()->TransferEnable();
-
 }
 
