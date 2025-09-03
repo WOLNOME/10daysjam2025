@@ -30,7 +30,6 @@ void TitleScene::Update() {
 	//タイトルシステムの更新
 	titleSystem_->Update();
 
-
 	//カメラ更新
 	camera_->Update();
 }

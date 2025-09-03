@@ -125,10 +125,11 @@
     <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="application\scene\MenuScene.cpp" />
     <ClCompile Include="application\scene\StageSelectScene.cpp" />
-    <ClCompile Include="application\scene\system\TitleSystem.cpp" />
-    <ClCompile Include="application\scene\system\MenuSystem.cpp" />
+    <ClCompile Include="application\system\TitleSystem.cpp" />
+    <ClCompile Include="application\system\MenuSystem.cpp" />
     <ClCompile Include="application\scene\TutorialScene.cpp" />
-    <ClCompile Include="application\scene\system\StageSelectSystem.cpp" />
+    <ClCompile Include="application\system\StageSelectSystem.cpp" />
+    <ClCompile Include="application\system\PoseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -240,10 +241,11 @@
     <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="application\scene\MenuScene.h" />
     <ClInclude Include="application\scene\StageSelectScene.h" />
-    <ClInclude Include="application\scene\system\TitleSystem.h" />
-    <ClInclude Include="application\scene\system\MenuSystem.h" />
+    <ClInclude Include="application\system\TitleSystem.h" />
+    <ClInclude Include="application\system\MenuSystem.h" />
     <ClInclude Include="application\scene\TutorialScene.h" />
-    <ClInclude Include="application\scene\system\StageSelectSystem.h" />
+    <ClInclude Include="application\system\StageSelectSystem.h" />
+    <ClInclude Include="application\system\PoseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />

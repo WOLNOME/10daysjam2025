@@ -3,7 +3,7 @@
 #include "GameCamera.h"
 
 //アプリケーション
-#include <application/scene/system/StageSelectSystem.h>
+#include <application/system/StageSelectSystem.h>
 
 class StageSelectScene : public BaseScene {
 public:

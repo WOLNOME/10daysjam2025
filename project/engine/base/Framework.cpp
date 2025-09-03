@@ -115,10 +115,11 @@ void Framework::Update() {
 	//インプット更新
 	Input::GetInstance()->Update();
 	
-	//メッセージ処理
+	//終了処理
 	if (WinApp::GetInstance()->ProcessMessage()) {
 		isOver = true;
 	}
+
 	//シーンマネージャー更新
 	SceneManager::GetInstance()->Update();
 }

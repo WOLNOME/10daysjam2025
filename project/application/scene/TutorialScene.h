@@ -1,6 +1,11 @@
 #pragma once
 #include "BaseScene.h"
 #include "GameCamera.h"
+#include <memory>
+
+//アプリケーション
+#include <application/system/PoseSystem.h>
+
 class TutorialScene : public BaseScene {
 public:
 	/// <summary>
@@ -24,5 +29,8 @@ private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
 	std::unique_ptr<GameCamera> camera_ = nullptr;
+
+	//ポーズシステム
+	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
 };
 

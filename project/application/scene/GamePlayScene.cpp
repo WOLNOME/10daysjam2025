@@ -14,6 +14,10 @@ void GamePlayScene::Initialize() {
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
 	//シーンライトのセット
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
+
+	//ポーズシステムの生成と初期化
+	poseSystem_ = std::make_unique<PoseSystem>();
+	poseSystem_->Initialize();
 }
 
 void GamePlayScene::Finalize() {
@@ -22,12 +26,25 @@ void GamePlayScene::Finalize() {
 void GamePlayScene::Update() {
 	//シーン共通の更新
 	BaseScene::Update();
+
+	//ポーズシステム更新
+	poseSystem_->Update();
+	//もしもポーズ中なら
+	if (poseSystem_->GetIsPosing()) {
+		return;
+	}
+
+	///========================	///
+	/// ↓↓処理はこの下に書く↓↓	///
+	///========================	///		
+
+
 	//カメラ更新
 	camera_->Update();
 }
 
 void GamePlayScene::DebugWithImGui() {
 #ifdef _DEBUG
-
+	poseSystem_->DebugWithImGui();
 #endif // _DEBUG
 }

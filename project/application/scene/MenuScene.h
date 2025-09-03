@@ -3,7 +3,7 @@
 #include "GameCamera.h"
 
 //アプリケーション
-#include <application/scene/system/MenuSystem.h>
+#include <application/system/MenuSystem.h>
 
 class MenuScene : public BaseScene {
 public:
