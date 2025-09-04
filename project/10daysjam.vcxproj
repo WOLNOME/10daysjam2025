@@ -160,6 +160,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\math\MyMath.cpp" />
     <ClCompile Include="engine\base\MainRender.cpp" />
     <ClCompile Include="application\character\Monkey.cpp" />
+    <ClCompile Include="application\scene\MenuScene.cpp" />
+    <ClCompile Include="application\system\MenuSystem.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="engine\scenebase\SceneFactory.cpp" />
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
@@ -175,6 +177,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\2d\SpriteManager.cpp" />
     <ClCompile Include="engine\3d\Object3dManager.cpp" />
     <ClCompile Include="application\character\Player.cpp" />
+    <ClCompile Include="application\scene\StageSelectScene.cpp" />
+    <ClCompile Include="application\scene\TitleScene.cpp" />
+    <ClCompile Include="application\system\TitleSystem.cpp" />
+    <ClCompile Include="application\scene\TutorialScene.cpp" />
+    <ClCompile Include="application\system\StageSelectSystem.cpp" />
+    <ClCompile Include="application\system\PoseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\character\CharacterBase.h" />
@@ -238,6 +246,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\LevelObject.h" />
     <ClInclude Include="application\scene\GamePlayScene.h" />
     <ClInclude Include="application\character\Monkey.h" />
+    <ClInclude Include="application\scene\MenuScene.h" />
+    <ClInclude Include="application\system\MenuSystem.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />
@@ -254,6 +264,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\2d\SpriteManager.h" />
     <ClInclude Include="engine\3d\Object3dManager.h" />
     <ClInclude Include="application\character\Player.h" />
+    <ClInclude Include="application\scene\StageSelectScene.h" />
+    <ClInclude Include="application\scene\TitleScene.h" />
+    <ClInclude Include="application\system\TitleSystem.h" />
+    <ClInclude Include="application\scene\TutorialScene.h" />
+    <ClInclude Include="application\system\StageSelectSystem.h" />
+    <ClInclude Include="application\system\PoseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

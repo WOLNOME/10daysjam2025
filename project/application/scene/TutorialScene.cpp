@@ -1,6 +1,6 @@
-#include "GamePlayScene.h"
+#include "TutorialScene.h"
 
-void GamePlayScene::Initialize() {
+void TutorialScene::Initialize() {
 	//シーン共通の初期化
 	BaseScene::Initialize();
 	input_ = Input::GetInstance();
@@ -15,17 +15,15 @@ void GamePlayScene::Initialize() {
 	//シーンライトのセット
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
-	player_ = std::make_unique<Player>();
-	player_->Initialize();
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();
 }
 
-void GamePlayScene::Finalize() {
+void TutorialScene::Finalize() {
 }
 
-void GamePlayScene::Update() {
+void TutorialScene::Update() {
 	//シーン共通の更新
 	BaseScene::Update();
 
@@ -41,13 +39,12 @@ void GamePlayScene::Update() {
 	///========================	///		
 
 
+
 	//カメラ更新
 	camera_->Update();
-
-	player_->Update();
 }
 
-void GamePlayScene::DebugWithImGui() {
+void TutorialScene::DebugWithImGui() {
 #ifdef _DEBUG
 	poseSystem_->DebugWithImGui();
 #endif // _DEBUG

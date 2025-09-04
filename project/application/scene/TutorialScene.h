@@ -2,13 +2,11 @@
 #include "BaseScene.h"
 #include "GameCamera.h"
 #include <memory>
-#include "application/character/Player.h"
-#include <DevelopCamera.h>
 
 //アプリケーション
 #include <application/system/PoseSystem.h>
 
-class GamePlayScene : public BaseScene {
+class TutorialScene : public BaseScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -29,10 +27,7 @@ public:
 
 private://メンバ変数
 	Input* input_ = nullptr;
-
-
-	std::unique_ptr<Player> player_ = nullptr;
-	
+	//開発用カメラ
 	std::unique_ptr<GameCamera> camera_ = nullptr;
 
 	//ポーズシステム
