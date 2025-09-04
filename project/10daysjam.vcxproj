@@ -107,6 +107,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\map\Block.cpp" />
+    <ClCompile Include="application\map\CsvLoader.cpp" />
     <ClCompile Include="engine\3d\AnimationModel.cpp" />
     <ClCompile Include="engine\3d\CombinedParticle.cpp" />
     <ClCompile Include="engine\3d\LevelLoader.cpp" />
@@ -157,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\WinApp.cpp" />
     <ClCompile Include="engine\math\MyMath.cpp" />
     <ClCompile Include="engine\base\MainRender.cpp" />
+    <ClCompile Include="application\map\Map.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="engine\scenebase\SceneFactory.cpp" />
     <ClCompile Include="engine\scenebase\SceneManager.cpp" />
@@ -173,6 +176,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\Object3dManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\map\Block.h" />
+    <ClInclude Include="application\map\MapChipType.h" />
+    <ClInclude Include="application\map\CsvLoader.h" />
     <ClInclude Include="engine\3d\AnimationModel.h" />
     <ClInclude Include="engine\3d\CombinedParticle.h" />
     <ClInclude Include="engine\3d\LevelLoader.h" />
@@ -231,6 +237,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\LineManager.h" />
     <ClInclude Include="engine\3d\LevelObject.h" />
     <ClInclude Include="application\scene\GamePlayScene.h" />
+    <ClInclude Include="application\map\Map.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />

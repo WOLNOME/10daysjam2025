@@ -1,6 +1,10 @@
 #pragma once
 #include "BaseScene.h"
 #include "GameCamera.h"
+#include "engine/3d/DevelopCamera.h"
+
+#include "application/map/Map.h"
+
 class GamePlayScene : public BaseScene {
 public:
 	/// <summary>
@@ -23,7 +27,11 @@ public:
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
-	std::unique_ptr<GameCamera> camera_ = nullptr;
+	std::unique_ptr<DevelopCamera> camera_ = nullptr;
+
+	//std::unique_ptr<Block> block_ = nullptr;
+
+	std::unique_ptr<Map> map_ = nullptr;
 	
 };
 
