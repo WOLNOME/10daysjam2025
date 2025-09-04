@@ -15,6 +15,8 @@ void GamePlayScene::Initialize() {
 	//シーンライトのセット
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();
@@ -41,6 +43,8 @@ void GamePlayScene::Update() {
 
 	//カメラ更新
 	camera_->Update();
+
+	player_->Update();
 }
 
 void GamePlayScene::DebugWithImGui() {
