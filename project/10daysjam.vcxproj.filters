@@ -125,6 +125,18 @@
     <ClCompile Include="application\map\Block.cpp" />
     <ClCompile Include="application\map\Map.cpp" />
     <ClCompile Include="application\map\CsvLoader.cpp" />
+    <ClCompile Include="application\character\CharacterBase.cpp" />
+    <ClCompile Include="application\character\Monkey.cpp" />
+    <ClCompile Include="application\character\Dog.cpp" />
+    <ClCompile Include="application\character\Player.cpp" />
+    <ClCompile Include="application\scene\TitleScene.cpp" />
+    <ClCompile Include="application\scene\MenuScene.cpp" />
+    <ClCompile Include="application\scene\StageSelectScene.cpp" />
+    <ClCompile Include="application\system\TitleSystem.cpp" />
+    <ClCompile Include="application\system\MenuSystem.cpp" />
+    <ClCompile Include="application\scene\TutorialScene.cpp" />
+    <ClCompile Include="application\system\StageSelectSystem.cpp" />
+    <ClCompile Include="application\system\PoseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -237,6 +249,18 @@
     <ClInclude Include="application\map\MapChipType.h" />
     <ClInclude Include="application\map\Map.h" />
     <ClInclude Include="application\map\CsvLoader.h" />
+    <ClInclude Include="application\character\CharacterBase.h" />
+    <ClInclude Include="application\character\Monkey.h" />
+    <ClInclude Include="application\character\Dog.h" />
+    <ClInclude Include="application\character\Player.h" />
+    <ClInclude Include="application\scene\TitleScene.h" />
+    <ClInclude Include="application\scene\MenuScene.h" />
+    <ClInclude Include="application\scene\StageSelectScene.h" />
+    <ClInclude Include="application\system\TitleSystem.h" />
+    <ClInclude Include="application\system\MenuSystem.h" />
+    <ClInclude Include="application\scene\TutorialScene.h" />
+    <ClInclude Include="application\system\StageSelectSystem.h" />
+    <ClInclude Include="application\system\PoseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />

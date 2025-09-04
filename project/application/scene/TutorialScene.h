@@ -1,18 +1,12 @@
 #pragma once
 #include "BaseScene.h"
 #include "GameCamera.h"
-#include "engine/3d/DevelopCamera.h"
-
-#include "application/map/Map.h"
-
 #include <memory>
-#include <DevelopCamera.h>
 
 //アプリケーション
 #include <application/system/PoseSystem.h>
-#include "application/character/Player.h"
 
-class GamePlayScene : public BaseScene {
+class TutorialScene : public BaseScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -34,15 +28,6 @@ public:
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
-	std::unique_ptr<DevelopCamera> camera_ = nullptr;
-
-	//std::unique_ptr<Block> block_ = nullptr;
-
-	std::unique_ptr<Map> map_ = nullptr;
-
-
-	std::unique_ptr<Player> player_ = nullptr;
-	
 	std::unique_ptr<GameCamera> camera_ = nullptr;
 
 	//ポーズシステム
