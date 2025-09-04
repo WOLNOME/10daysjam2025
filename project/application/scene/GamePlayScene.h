@@ -2,11 +2,11 @@
 #include "BaseScene.h"
 #include "GameCamera.h"
 #include <memory>
-#include "application/character/Player.h"
 #include <DevelopCamera.h>
 
 //アプリケーション
 #include <application/system/PoseSystem.h>
+#include "application/character/Player.h"
 
 class GamePlayScene : public BaseScene {
 public:
