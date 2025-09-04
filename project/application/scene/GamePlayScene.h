@@ -43,7 +43,6 @@ private://メンバ変数
 
 	std::unique_ptr<Player> player_ = nullptr;
 	
-	std::unique_ptr<GameCamera> camera_ = nullptr;
 
 	//ポーズシステム
 	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
