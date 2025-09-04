@@ -122,6 +122,9 @@
     <ClCompile Include="engine\3d\Object3dManager.cpp" />
     <ClCompile Include="engine\3d\LevelObject.cpp" />
     <ClCompile Include="application\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\map\Block.cpp" />
+    <ClCompile Include="application\map\Map.cpp" />
+    <ClCompile Include="application\map\CsvLoader.cpp" />
     <ClCompile Include="application\character\CharacterBase.cpp" />
     <ClCompile Include="application\character\Monkey.cpp" />
     <ClCompile Include="application\character\Dog.cpp" />
@@ -242,6 +245,10 @@
     <ClInclude Include="engine\3d\Object3dManager.h" />
     <ClInclude Include="engine\3d\LevelObject.h" />
     <ClInclude Include="application\scene\GamePlayScene.h" />
+    <ClInclude Include="application\map\Block.h" />
+    <ClInclude Include="application\map\MapChipType.h" />
+    <ClInclude Include="application\map\Map.h" />
+    <ClInclude Include="application\map\CsvLoader.h" />
     <ClInclude Include="application\character\CharacterBase.h" />
     <ClInclude Include="application\character\Monkey.h" />
     <ClInclude Include="application\character\Dog.h" />
