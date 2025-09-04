@@ -19,6 +19,11 @@ public:
 	/// </summary>
 	virtual void Update();
 
+
+	void SetWorldPosition(const Vector3& p) {
+		if (character_) { character_->worldTransform.translate = p; }
+	}
+
 protected:
 
 	//3Dオブジェクト

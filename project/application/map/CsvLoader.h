@@ -5,6 +5,8 @@
 #include <sstream>
 #include "MapChipType.h"
 #include "Vector2.h"
+
+
 struct CsvMapData {
 	// 2D配列でマップデータを保持
 	std::vector<std::vector<MapChipType>> layer1;

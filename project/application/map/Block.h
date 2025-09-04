@@ -16,9 +16,13 @@ public:
 	void Draw();
 
 
+	float GetScaleY() const { return scale_.y; }
+
 
 private:
 	std::unique_ptr<Object3d> object3d_ = nullptr;
+
+	Vector3 scale_ = { 1.0f,1.0f,1.0f };
 
 };
 

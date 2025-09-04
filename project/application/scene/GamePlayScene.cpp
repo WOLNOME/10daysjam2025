@@ -19,7 +19,7 @@ void GamePlayScene::Initialize() {
 	map_->Initialize("Stage_Test.csv");
 
 	player_ = std::make_unique<Player>();
-	player_->Initialize();
+	player_->Initialize(*map_);
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();

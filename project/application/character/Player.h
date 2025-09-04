@@ -3,6 +3,9 @@
 #include "application/character/Dog.h"
 #include "application/character/Monkey.h"
 
+// 前方宣言
+class Map;
+
 class Player
 {
 public:
@@ -10,7 +13,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize();
+	void Initialize(const Map& map);
 
 	/// <summary>
 	/// 更新処理

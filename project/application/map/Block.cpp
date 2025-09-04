@@ -12,7 +12,7 @@ void Block::Initialize(MapChipType mapChipType, Vector3 translate)
 
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Block"), ToFile(mapChipType));
-	object3d_->worldTransform.scale = { 1.0f,1.0f,1.0f };
+	object3d_->worldTransform.scale = { scale_ };
 	object3d_->worldTransform.translate = { translate };
 
 
