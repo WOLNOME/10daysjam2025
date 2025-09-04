@@ -15,8 +15,8 @@ void GamePlayScene::Initialize() {
 	//シーンライトのセット
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
-	monkey_ = std::make_unique<Monkey>();
-	monkey_->Initialize();
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
 }
 
 void GamePlayScene::Finalize() {
@@ -28,7 +28,7 @@ void GamePlayScene::Update() {
 	//カメラ更新
 	camera_->Update();
 
-	monkey_->Update();
+	player_->Update();
 }
 
 void GamePlayScene::DebugWithImGui() {

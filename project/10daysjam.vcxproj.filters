@@ -125,6 +125,7 @@
     <ClCompile Include="application\character\CharacterBase.cpp" />
     <ClCompile Include="application\character\Monkey.cpp" />
     <ClCompile Include="application\character\Dog.cpp" />
+    <ClCompile Include="application\character\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -236,6 +237,7 @@
     <ClInclude Include="application\character\CharacterBase.h" />
     <ClInclude Include="application\character\Monkey.h" />
     <ClInclude Include="application\character\Dog.h" />
+    <ClInclude Include="application\character\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />

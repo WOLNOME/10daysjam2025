@@ -9,8 +9,3 @@ void CharacterBase::Update()
 {
 	
 }
-
-void CharacterBase::Move()
-{
-
-}

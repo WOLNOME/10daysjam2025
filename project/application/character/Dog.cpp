@@ -6,7 +6,7 @@ void Dog::Initialize()
 	character_ = std::make_unique<Object3d>();
 	character_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Dog"), "bunny");
 
-	character_->worldTransform.translate = { 0.0f,0.0f,5.0f };
+	character_->worldTransform.translate = { 0.0f,0.0f,0.0f };
 }
 
 void Dog::Update()

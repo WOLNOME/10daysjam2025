@@ -19,13 +19,6 @@ public:
 	/// </summary>
 	virtual void Update();
 
-private:
-
-	/// <summary>
-	/// 猿、犬の移動挙動
-	/// </summary>
-	void Move();
-
 protected:
 
 	//3Dオブジェクト

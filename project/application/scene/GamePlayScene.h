@@ -2,7 +2,7 @@
 #include "BaseScene.h"
 #include "GameCamera.h"
 #include <memory>
-#include "application/character/Monkey.h"
+#include "application/character/Player.h"
 #include <DevelopCamera.h>
 
 class GamePlayScene : public BaseScene {
@@ -31,7 +31,7 @@ private://メンバ変数
 
 	std::unique_ptr<DevelopCamera> camera_ = nullptr;
 
-	std::unique_ptr<Monkey> monkey_ = nullptr;
+	std::unique_ptr<Player> player_ = nullptr;
 	
 };
 
