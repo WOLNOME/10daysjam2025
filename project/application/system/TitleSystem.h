@@ -1,5 +1,6 @@
 #pragma once
 #include <Input.h>
+#include <Audio.h>
 #include <Sprite.h>
 #include <Handle.h>
 #include <memory>
@@ -28,6 +29,11 @@ private://メンバ変数
 	std::unique_ptr<Sprite> nextUITextSprite_ = nullptr;
 	Handle nextUITextTexture_;
 
+	//シーン遷移中判定フラグ
+	bool isSceneChanging_ = false;
+
+	//決定音
+	std::unique_ptr<Audio> decideSE_ = nullptr;
 
 };
 

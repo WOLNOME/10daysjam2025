@@ -41,12 +41,18 @@ void TitleSystem::Initialize() {
 	nextUITextSprite_->SetPosition({ 640,600 });
 	nextUITextSprite_->SetAnchorPoint({ 0.5f,0.5f });
 
+	//決定音生成
+	decideSE_ = std::make_unique<Audio>();
+	decideSE_->Initialize("decide.wav");
+
 }
 
 void TitleSystem::Update() {
 	//スペースキーorBボタンで次のシーンへ
-	if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
 		SceneManager::GetInstance()->SetNextScene("MENU");
+		isSceneChanging_ = true;
+		decideSE_->Play();
 	}
 }
 
