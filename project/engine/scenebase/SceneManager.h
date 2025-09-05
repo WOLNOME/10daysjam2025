@@ -44,7 +44,7 @@ private:
 	void ChangeScene();
 public:
 	//次シーンのセット
-	void SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType = SceneTransitionAnimation::TransitionType::FADE, uint32_t frame = 30);
+	void SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType = SceneTransitionAnimation::TransitionType::FADE, uint32_t frame = 60);
 
 private:
 	//今のシーン
@@ -55,9 +55,6 @@ private:
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//シーン遷移アニメーション
 	std::unique_ptr<SceneTransitionAnimation> sceneTransitionAnimation_ = nullptr;
-
-	//アプリケーションの終了フラグ
-	bool isOver_ = false;
 
 };
 
