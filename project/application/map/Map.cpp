@@ -92,6 +92,77 @@ std::optional<Vector3> Map::GetMonkeySpawnWorld() const
 	return std::nullopt;
 }
 
+std::optional<GridPos> Map::GetDogSpawnGrid() const
+{
+	if (csvMapData_.spawnDog.x >= 0 && csvMapData_.spawnDog.y >= 0)
+		return GridPos{ (int)csvMapData_.spawnDog.x, (int)csvMapData_.spawnDog.y };
+	return std::nullopt;
+}
+
+std::optional<GridPos> Map::GetMonkeySpawnGrid() const
+{
+	if (csvMapData_.spawnMonkey.x >= 0 && csvMapData_.spawnMonkey.y >= 0)
+		return GridPos{ (int)csvMapData_.spawnMonkey.x, (int)csvMapData_.spawnMonkey.y };
+	return std::nullopt;
+}
+
+bool Map::IsWalkableFor(ActorKind who, int gx, int gy) const
+{
+	// 範囲チェック
+	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
+
+	// 判定するレイヤ（犬=1層 / 猿=2層）
+	const auto& layer = (who == ActorKind::Dog) ? csvMapData_.layer1 : csvMapData_.layer2;
+	MapChipType t = layer[gy][gx];
+
+	if (who == ActorKind::Dog) {
+		// ---- 犬は layer1 を基準に判定
+		const auto& L1 = csvMapData_.layer1;
+		const auto& L2 = csvMapData_.layer2; // ← ★ 同じ(x,y)の layer2 も確認する
+		MapChipType t1 = L1[gy][gx];
+
+		// まずは「犬が歩けるタイル」か？
+		bool baseOK =
+			(t1 == MapChipType::StartDog) ||
+			(t1 == MapChipType::StartMonkey) ||
+			(t1 == MapChipType::FloorDog) ||
+			(t1 == MapChipType::BlockMonkey) ||
+			(t1 == MapChipType::GoalDog)/* ||
+			(t1 == MapChipType::GoalMonkey)*/;
+
+		if (!baseOK) return false;
+
+		// 同じグリッドの layer2 に BlockMonkey がある場合は天井衝突扱いで NG
+		MapChipType t2 = L2[gy][gx];
+		if (t2 == MapChipType::BlockMonkey || t2 == MapChipType::GoalMonkey) {
+			return false;
+		}
+		return true;
+	}
+	else { // Monkey（従来どおり layer2 基準）
+		const auto& L2 = csvMapData_.layer2;
+		MapChipType t2 = L2[gy][gx];
+		switch (t2) {
+		case MapChipType::StartDog:
+		case MapChipType::StartMonkey:
+		case MapChipType::FloorDog:
+		case MapChipType::FloorMonkey:
+		case MapChipType::BlockMonkey:
+		case MapChipType::GoalDog:
+		case MapChipType::GoalMonkey:
+			return true;
+		default:
+			return false;
+		}
+	}
+}
+
+Vector3 Map::WorldFromGridFor(ActorKind who, int gx, int gy) const
+{
+	const float y = (who == ActorKind::Dog) ? (0.0f + blockScaleY_) : (tileSize_ + blockScaleY_);
+	return GridToWorld(gx, gy, y);
+}
+
 Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 {
 	// CSVは上→下の行順なので、既存描画と同じくY軸を反転

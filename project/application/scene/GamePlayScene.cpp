@@ -48,7 +48,7 @@ void GamePlayScene::Update() {
 	//カメラ更新
 	camera_->Update();
 
-	player_->Update();
+	player_->Update(*map_);
 }
 
 void GamePlayScene::DebugWithImGui() {

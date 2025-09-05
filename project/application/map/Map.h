@@ -2,6 +2,13 @@
 #include "Block.h"
 #include "CsvLoader.h"
 #include "Vector3.h"
+#include <optional>
+#include "application/map/MapTypes.h"
+
+//enum class ActorKind { Dog, Monkey };   // 誰の判定か
+//
+//struct GridPos { int x; int y; };       // グリッド座標
+
 class Map
 {
 
@@ -12,7 +19,15 @@ public:
 	// 犬/猿のスポーン位置（ワールド座標）を返す
 	std::optional<Vector3> GetDogSpawnWorld() const;
 	std::optional<Vector3> GetMonkeySpawnWorld() const;
+	// スポーン（グリッド/ワールド）取得
+	std::optional<GridPos> GetDogSpawnGrid() const;
+	std::optional<GridPos> GetMonkeySpawnGrid() const;
 
+	// 歩行可能判定（タイルで決める）
+	bool IsWalkableFor(ActorKind who, int gx, int gy) const;
+
+	// グリッド→ワールド（犬/猿の高さ込み）
+	Vector3 WorldFromGridFor(ActorKind who, int gx, int gy) const;
 
 private:
 

@@ -255,6 +255,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\character\Monkey.h" />
     <ClInclude Include="application\scene\MenuScene.h" />
     <ClInclude Include="application\system\MenuSystem.h" />
+    <ClInclude Include="application\map\MapTypes.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="engine\scenebase\SceneFactory.h" />
     <ClInclude Include="engine\scenebase\SceneManager.h" />

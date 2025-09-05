@@ -2,6 +2,7 @@
 #include "application/character/CharacterBase.h"
 #include "application/character/Dog.h"
 #include "application/character/Monkey.h"
+#include "application/map/MapTypes.h"
 
 // 前方宣言
 class Map;
@@ -18,14 +19,16 @@ public:
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	void Update();
-
-private:
+	void Update(const Map& map);
 
 	/// <summary>
 	/// 猿、犬の移動挙動
 	/// </summary>
-	void Move();
+	void Move(const Map& map);
+
+private:
+
+
 
 private:
 
@@ -38,6 +41,13 @@ private:
 	std::unique_ptr<Dog>    dog_;
 	std::unique_ptr<Monkey> monkey_;
 
+
+	GridPos dogGrid_{ 0,0 };
+	GridPos monkeyGrid_{ 0,0 };
+
+	// 補助
+	void TryStep(Active who, int dx, int dy, const Map& map);
+	void SnapToWorld(Active who, const Map& map);
 
 };
 
