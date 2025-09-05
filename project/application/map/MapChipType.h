@@ -20,8 +20,8 @@ inline std::string ToFile(MapChipType t) {
 	case MapChipType::StartDog:     return "startDog";
 	case MapChipType::StartMonkey:  return "startMonkey";*/
 	case MapChipType::FloorDog:     return "floorDog";
-	case MapChipType::FloorMonkey:  return "floorMonkey";
-	case MapChipType::BlockMonkey:  return "blockMonkey";
+	case MapChipType::FloorMonkey:  return "blockMonkey";
+	case MapChipType::BlockMonkey:  return "floorMonkey";
 	case MapChipType::GoalDog:      return "goalDog";
 	case MapChipType::GoalMonkey:   return "goalMonkey";
 	default:                        return "Empty"; // フォールバック

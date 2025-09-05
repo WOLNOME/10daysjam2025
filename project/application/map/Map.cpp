@@ -6,11 +6,11 @@ namespace {
 		case MapChipType::FloorDog:
 		case MapChipType::FloorMonkey:
 		case MapChipType::BlockMonkey:
-		case MapChipType::GoalDog:       
-		case MapChipType::GoalMonkey:    
+		case MapChipType::GoalDog:
+		case MapChipType::GoalMonkey:
 			return true;            // モデルがあるタイルだけ描画
 		default:
-			return false;           
+			return false;
 		}
 	}
 }
@@ -18,14 +18,19 @@ namespace {
 void Map::Initialize(const std::string& filepath) {
 	CsvLoader loader;
 	loader.Initialize();
-	csvMapData_ = loader.Loader(filepath); 
+	csvMapData_ = loader.Loader(filepath);
 
 	blocksL1_.clear();
 	blocksL2_.clear();
 
+	// 初期化の前にテーブルをリサイズしておく（Initialize の冒頭あたり）
+	l2BlockAt_.assign(
+		csvMapData_.height,
+		std::vector<Block*>(csvMapData_.width, nullptr)
+	);
 
 
-	
+
 	auto tileToWorld = [&](int x, int y, float yOffset = 0.0f) {
 
 		int flippedY = (csvMapData_.height - 1) - y;
@@ -63,10 +68,14 @@ void Map::Initialize(const std::string& filepath) {
 
 			auto blk = std::make_unique<Block>();
 			blk->Initialize(t, pos);
-			blockScaleY_ = blk->GetScaleY();
+			// BlockMonkey ならテーブル登録
+			if (t == MapChipType::BlockMonkey) {
+				l2BlockAt_[y][x] = blk.get();
+			}
+			//blockScaleY_ = blk->GetScaleY();
 			blocksL2_.push_back(std::move(blk));
 		}
-		
+
 	}
 
 }
@@ -134,7 +143,7 @@ bool Map::IsWalkableFor(ActorKind who, int gx, int gy) const
 
 		// 同じグリッドの layer2 に BlockMonkey がある場合は天井衝突扱いで NG
 		MapChipType t2 = L2[gy][gx];
-		if (t2 == MapChipType::BlockMonkey || t2 == MapChipType::GoalMonkey) {
+		if (t2 == MapChipType::FloorMonkey || t2 == MapChipType::GoalMonkey) {
 			return false;
 		}
 		return true;
@@ -162,6 +171,62 @@ Vector3 Map::WorldFromGridFor(ActorKind who, int gx, int gy) const
 	const float y = (who == ActorKind::Dog) ? (0.0f + blockScaleY_) : (tileSize_ + blockScaleY_);
 	return GridToWorld(gx, gy, y);
 }
+
+bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos& monkeyPos)
+{
+	const int nx = dogGx + dx; // 犬の次マス（箱の現在地想定）
+	const int ny = dogGy + dy;
+	const int tx = nx + dx;    // 箱の移動先
+	const int ty = ny + dy;
+
+	// 範囲チェック
+	if (nx < 0 || ny < 0 || nx >= csvMapData_.width || ny >= csvMapData_.height) return false;
+	if (tx < 0 || ty < 0 || tx >= csvMapData_.width || ty >= csvMapData_.height) return false;
+
+	// 次マスに箱があるか？（layer2）
+	if (csvMapData_.layer2[ny][nx] != MapChipType::BlockMonkey) return false;
+
+	// その箱の上にサルが乗っていたら押せない
+	if (monkeyPos.x == nx && monkeyPos.y == ny) {
+		return false;
+	}
+
+	// 押し先が空いているか？
+	MapChipType dest = csvMapData_.layer2[ty][tx];
+
+	// FloorMonkey / GoalMonkey は押し先として禁止
+	if (dest == MapChipType::FloorMonkey || dest == MapChipType::GoalMonkey) {
+		return false;
+	}
+
+	// 許可は Empty のみ（他は全部NG：Start*, BlockMonkey なども不可）
+	if (dest != MapChipType::Empty) {
+		return false;
+	}
+
+	// ここから先は従来どおり（グリッド更新・テーブル更新・見た目移動）
+	Block* block = l2BlockAt_[ny][nx];
+	if (!block) return false;
+
+	csvMapData_.layer2[ny][nx] = MapChipType::Empty;
+	csvMapData_.layer2[ty][tx] = MapChipType::BlockMonkey;
+
+	l2BlockAt_[ny][nx] = nullptr;
+	l2BlockAt_[ty][tx] = block;
+
+	Vector3 newPos = GridToWorld(tx, ty, tileSize_);
+	block->SetWorldPosition(newPos);
+
+	return true;
+
+}
+
+bool Map::HasBlockMonkeyAt(int gx, int gy) const
+{
+	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
+	return csvMapData_.layer2[gy][gx] == MapChipType::BlockMonkey;
+}
+
 
 Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 {

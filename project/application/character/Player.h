@@ -19,12 +19,12 @@ public:
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	void Update(const Map& map);
+	void Update(Map& map);
 
 	/// <summary>
 	/// 猿、犬の移動挙動
 	/// </summary>
-	void Move(const Map& map);
+	void Move(Map& map);
 
 private:
 
@@ -46,7 +46,7 @@ private:
 	GridPos monkeyGrid_{ 0,0 };
 
 	// 補助
-	void TryStep(Active who, int dx, int dy, const Map& map);
+	void TryStep(Active who, int dx, int dy, Map& map);
 	void SnapToWorld(Active who, const Map& map);
 
 };

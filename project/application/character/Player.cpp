@@ -26,7 +26,7 @@ void Player::Initialize(const Map& map)
 }
 
 
-void Player::Update(const Map& map)
+void Player::Update(Map& map)
 {
     Move(map);
 
@@ -34,7 +34,7 @@ void Player::Update(const Map& map)
     monkey_->Update();
 }
 
-void Player::Move(const Map& map)
+void Player::Move(Map& map)
 {
     // 操作対象の切替（必要なら）
     if (Input::GetInstance()->TriggerKey(DIK_1)) active_ = Active::Dog;
@@ -55,20 +55,35 @@ void Player::Move(const Map& map)
     }
 }
 
-void Player::TryStep(Active who, int dx, int dy, const Map& map)
+void Player::TryStep(Active who, int dx, int dy, Map& map)
 {
     GridPos& g = (who == Active::Dog) ? dogGrid_ : monkeyGrid_;
     const int nx = g.x + dx;
     const int ny = g.y + dy;
 
-    const ActorKind kind = (who == Active::Dog) ? ActorKind::Dog : ActorKind::Monkey;
+    if (who == Active::Dog) {
+        // 先に「次マスに箱ある？」を明確に判定
+        if (map.HasBlockMonkeyAt(nx, ny)) {
+            // 押せたら犬も進む。押せなければ何もしない（＝めり込まない）
+            if (map.TryPushBlockByDog(g.x, g.y, dx, dy, monkeyGrid_)) {
+                g.x = nx; g.y = ny;
+                SnapToWorld(who, map);
+            }
+            return; // ここで終了。通常歩行へは進まない
+        }
 
-    if (map.IsWalkableFor(kind, nx, ny)) {
+        // 箱が無いなら通常歩行
+        if (map.IsWalkableFor(ActorKind::Dog, nx, ny)) {
+            g.x = nx; g.y = ny;
+            SnapToWorld(who, map);
+        }
+        return;
+    }
+
+    // 猿は従来どおり
+    if (map.IsWalkableFor(ActorKind::Monkey, nx, ny)) {
         g.x = nx; g.y = ny;
         SnapToWorld(who, map);
-        // ------------------------------------------------//
-        // 押し箱やスイッチ、ゴール判定はここに追加
-        // ------------------------------------------------//
     }
 }
 

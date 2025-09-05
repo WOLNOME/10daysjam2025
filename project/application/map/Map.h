@@ -29,7 +29,18 @@ public:
 	// グリッド→ワールド（犬/猿の高さ込み）
 	Vector3 WorldFromGridFor(ActorKind who, int gx, int gy) const;
 
+	// 犬が箱を押す（成功なら true）
+	bool TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos& monkeyPos);
+
+	// (gx,gy) の L2 に BlockMonkey があるか？
+	bool HasBlockMonkeyAt(int gx, int gy) const;
+
+
 private:
+
+	// layer2 上の BlockMonkey の配置 -> Block* を保持
+	// サイズは [height][width]。BlockMonkey があるセルに対応する Block* を格納（なければ nullptr）
+	std::vector<std::vector<Block*>> l2BlockAt_;
 
 	// 一層
 	std::vector<std::unique_ptr<Block>> blocksL1_;
