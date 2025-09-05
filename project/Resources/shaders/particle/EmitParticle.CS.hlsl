@@ -61,7 +61,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
     
     //乱数生成機の作成
     RandomGenerator generator;
-    generator.seed = (DTid + gPerFrame.time) * gPerFrame.time;
     //エフェクトの生成スタイルによって分ける
     if (gEmitterInfo.effectStyle == 0)      //ループ処理
     {
@@ -95,6 +94,9 @@ void GenerateGrain(int generateNum, RandomGenerator generator)
 {
     for (int i = 0; i < generateNum; i++)
     {
+        //乱数のシードを更新
+        generator.seed = rcp((float) i) * gPerFrame.time;
+        
         int freeListIndex;
         
         //生成方法ごとに処理を分ける
