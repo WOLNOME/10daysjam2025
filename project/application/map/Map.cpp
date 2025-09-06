@@ -227,6 +227,20 @@ bool Map::HasBlockMonkeyAt(int gx, int gy) const
 	return csvMapData_.layer2[gy][gx] == MapChipType::BlockMonkey;
 }
 
+bool Map::IsGoalFor(ActorKind who, int gx, int gy) const
+{
+	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
+
+	if (who == ActorKind::Dog) {
+		const auto& L1 = csvMapData_.layer1;  // 犬は 1層を見る
+		return (L1[gy][gx] == MapChipType::GoalDog);      // 6
+	}
+	else {
+		const auto& L2 = csvMapData_.layer2;  // 猿は 2層を見る
+		return (L2[gy][gx] == MapChipType::GoalMonkey);   // 7
+	}
+}
+
 
 Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 {

@@ -30,6 +30,10 @@ void Player::Update(Map& map)
 {
     Move(map);
 
+    // ★ ゴール上なら回す（補間中でも回したいので return する前に実行）
+    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
+    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
+
     dog_->Update();
     monkey_->Update();
 }

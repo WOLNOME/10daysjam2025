@@ -35,6 +35,10 @@ public:
 	// (gx,gy) の L2 に BlockMonkey があるか？
 	bool HasBlockMonkeyAt(int gx, int gy) const;
 
+	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
+	bool IsGoalFor(ActorKind who, int gx, int gy) const;
+
+
 
 private:
 
