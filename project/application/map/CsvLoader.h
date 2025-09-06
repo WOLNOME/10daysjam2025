@@ -8,8 +8,9 @@
 
 
 struct CsvMapData {
-	// 2D配列でマップデータを保持
+	// 一層（犬のフロア）のマップデータ
 	std::vector<std::vector<MapChipType>> layer1;
+	// 二層（猿のフロア）のマップデータ
 	std::vector<std::vector<MapChipType>> layer2;
 	// マップの大きさ
 	int width = 0;
@@ -20,6 +21,7 @@ struct CsvMapData {
 	// ゴール場所 (マップチップ座標)
 	Vector2 goalDog{ -1, -1 };
 	Vector2 goalMonkey{ -1, -1 };
+	// -1は未設定の場合画面外に行くように
 };
 class CsvLoader
 {
@@ -29,11 +31,11 @@ public:
 	
 	// 初期化
 	void Initialize();
-
+	// CSVファイル読み込み
 	CsvMapData Loader(const std::string& filepath);
 
 private:
-
+	// マップの基本情報
 	CsvMapData csvMapData_;
 
 

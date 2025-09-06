@@ -2,26 +2,27 @@
 #include <algorithm>
 
 namespace csv_detail {
-
+    // 文字列の前後の空白文字の削除
     inline void trim(std::string& s) {
+        // std::isspaceで空白文字の判定
         auto isSp = [](unsigned char c) { return std::isspace(c); };
         s.erase(s.begin(), std::find_if(s.begin(), s.end(),
             [&](unsigned char c) { return !isSp(c); }));
         s.erase(std::find_if(s.rbegin(), s.rend(),
             [&](unsigned char c) { return !isSp(c); }).base(), s.end());
     }
-
+    // 行が空白とカンマだけで構成されていたら ture （空行と判断）
     inline bool isBlankCsvLine(const std::string& line) {
         for (char c : line) if (c != ',' && !std::isspace((unsigned char)c)) return false;
         return true;
     }
-
+    // １行の最初のセル（カンマの部分）を取り出す
     inline std::string firstCell(const std::string& line) {
         auto p = line.find(',');
         return (p == std::string::npos) ? line : line.substr(0, p);
     }
 
-   
+	// UTF-8 BOM を取り除く
     inline std::string stripBOM(std::string s) {
         if (s.size() >= 3 &&
             (unsigned char)s[0] == 0xEF && (unsigned char)s[1] == 0xBB && (unsigned char)s[2] == 0xBF) {
@@ -29,13 +30,13 @@ namespace csv_detail {
         }
         return s;
     }
-
+    // 文字列を小文字化
     inline std::string toLower(std::string s) {
         std::transform(s.begin(), s.end(), s.begin(),
             [](unsigned char c) { return (char)std::tolower(c); });
         return s;
     }
-
+    // 行ごとに長さが違った時最大の長さに合わせて足りない部分を Emptyで埋める
     inline void normalize(std::vector<std::vector<MapChipType>>& grid) {
         size_t maxW = 0;
         for (auto& r : grid) maxW = std::max(maxW, r.size());
@@ -64,10 +65,12 @@ void CsvLoader::Initialize() {
 
 CsvMapData CsvLoader::Loader(const std::string& filepath)
 {
-	std::string path = "Resources/mapData/" + filepath;
+    // csvファイルを開く
+	std::string path = "Resources/mapData/" + filepath+".csv";
     std::ifstream ifs(path);
     if (!ifs) {
-        throw std::runtime_error("CsvLoader: failed to open " + filepath);
+        // 開けなかった場合例外を投げる
+        throw std::runtime_error("CsvLoader: failed to open " + path);
     }
 
     // レイヤーごとの一次バッファ
