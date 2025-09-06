@@ -52,18 +52,29 @@ void MenuSystem::Initialize() {
 	tutorialTextSprite_->SetTexture(tutorialTextTexture_);
 	tutorialTextSprite_->SetPosition({ 640,360 });
 	tutorialTextSprite_->SetAnchorPoint({ 0.5f,0.5f });
+
+	//移動音生成
+	moveSE_ = std::make_unique<Audio>();
+	moveSE_->Initialize("cursor.wav");
+	//決定音生成
+	decideSE_ = std::make_unique<Audio>();
+	decideSE_->Initialize("decide.wav");
 }
 
 void MenuSystem::Update() {
 	//上下キーで選択状態変更
-	if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP) || input_->TriggerPadButton(GamepadButton::DPadUp)) {
+	if ((input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP) || input_->TriggerPadButton(GamepadButton::DPadUp)) && !isSceneChanging_) {
 		if (selectState_ == SelectState::Tutorial) {
 			selectState_ = SelectState::Play;
+			//移動音再生
+			moveSE_->Play();
 		}
 	}
-	if (input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN) || input_->TriggerPadButton(GamepadButton::DPadDown)) {
+	if ((input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN) || input_->TriggerPadButton(GamepadButton::DPadDown)) && !isSceneChanging_) {
 		if (selectState_ == SelectState::Play) {
 			selectState_ = SelectState::Tutorial;
+			//移動音再生
+			moveSE_->Play();
 		}
 	}
 	//選択状態に応じてテキストの色を変更
@@ -82,7 +93,7 @@ void MenuSystem::Update() {
 		break;
 	}
 	//スペースキーorAボタンで次のシーンへ
-	if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
 		switch (selectState_) {
 		case SelectState::Play:
 			SceneManager::GetInstance()->SetNextScene("STAGESELECT");
@@ -91,10 +102,16 @@ void MenuSystem::Update() {
 			SceneManager::GetInstance()->SetNextScene("TUTORIAL");
 			break;
 		}
+		isSceneChanging_ = true;
+		//決定音再生
+		decideSE_->Play();
 	}
 	//エスケープキーorBボタンで前のシーンへ
-	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) {
+	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {
 		SceneManager::GetInstance()->SetNextScene("TITLE");
+		isSceneChanging_ = true;
+		//決定音再生
+		decideSE_->Play();
 	}
 }
 

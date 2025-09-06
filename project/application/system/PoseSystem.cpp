@@ -72,6 +72,13 @@ void PoseSystem::Initialize() {
 	backMenuTextSprite_->SetAnchorPoint({ 0.5f,0.5f });
 	backMenuTextSprite_->SetIsDisplay(false);
 
+	//移動音生成
+	moveSE_ = std::make_unique<Audio>();
+	moveSE_->Initialize("cursor.wav");
+	//決定音生成
+	decideSE_ = std::make_unique<Audio>();
+	decideSE_->Initialize("decide.wav");
+
 }
 
 void PoseSystem::Update() {
@@ -86,24 +93,34 @@ void PoseSystem::Update() {
 			restartTextSprite_->SetIsDisplay(true);
 			backStageSelectTextSprite_->SetIsDisplay(true);
 			backMenuTextSprite_->SetIsDisplay(true);
+			//決定音再生
+			decideSE_->Play();
 		}
 	}
 	else {
 		//上下キーで選択状態変更
-		if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP) || input_->TriggerPadButton(GamepadButton::DPadUp)) {
+		if ((input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP) || input_->TriggerPadButton(GamepadButton::DPadUp)) && !isSceneChanging_) {
 			if (selectState_ == SelectState::BackToStageSelect) {
 				selectState_ = SelectState::Restart;
+				//移動音再生
+				moveSE_->Play();
 			}
 			else if (selectState_ == SelectState::BackToMenu) {
 				selectState_ = SelectState::BackToStageSelect;
+				//移動音再生
+				moveSE_->Play();
 			}
 		}
-		if (input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN) || input_->TriggerPadButton(GamepadButton::DPadDown)) {
+		if ((input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN) || input_->TriggerPadButton(GamepadButton::DPadDown)) && !isSceneChanging_) {
 			if (selectState_ == SelectState::Restart) {
 				selectState_ = SelectState::BackToStageSelect;
+				//移動音再生
+				moveSE_->Play();
 			}
 			else if (selectState_ == SelectState::BackToStageSelect) {
 				selectState_ = SelectState::BackToMenu;
+				//移動音再生
+				moveSE_->Play();
 			}
 		}
 		//選択状態に応じてテキストの色を変更
@@ -131,22 +148,28 @@ void PoseSystem::Update() {
 		}
 		//スペースキーorAボタンで選択
 		bool isRestart = false;
-		if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+		if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
 			switch (selectState_) {
 			case SelectState::Restart:
 				isRestart = true;
 				break;
 			case SelectState::BackToStageSelect:
 				SceneManager::GetInstance()->SetNextScene("STAGESELECT");
+				isSceneChanging_ = true;
 				break;
 			case SelectState::BackToMenu:
 				SceneManager::GetInstance()->SetNextScene("MENU");
+				isSceneChanging_ = true;
 				break;
 			}
+			//決定音再生
+			decideSE_->Play();
 		}
 		//エスケープキーorBボタンもポーズを閉じられる
-		if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) {
+		if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {
 			isRestart = true;
+			//決定音再生
+			decideSE_->Play();
 		}
 		//ポーズを閉じる処理
 		if (isRestart) {

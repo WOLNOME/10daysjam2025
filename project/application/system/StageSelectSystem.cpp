@@ -26,16 +26,29 @@ void StageSelectSystem::Initialize() {
 	menuTextSprite_->SetTexture(menuTextTexture_);
 	menuTextSprite_->SetPosition({ 640,120 });
 	menuTextSprite_->SetAnchorPoint({ 0.5f,0.5f });
+
+	//移動音生成
+	moveSE_ = std::make_unique<Audio>();
+	moveSE_->Initialize("cursor.wav");
+	//決定音生成
+	decideSE_ = std::make_unique<Audio>();
+	decideSE_->Initialize("decide.wav");
 }
 
 void StageSelectSystem::Update() {
 	//スペースキーorAボタンで次のシーンへ(後々選択できるようにする)
-	if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA))&&!isSceneChanging_) {
 		SceneManager::GetInstance()->SetNextScene("GAMEPLAY");
+		isSceneChanging_ = true;
+		//決定音再生
+		decideSE_->Play();
 	}
 	//エスケープキーorBボタンで前のシーンへ
-	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) {
+	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB))&&!isSceneChanging_) {
 		SceneManager::GetInstance()->SetNextScene("MENU");
+		isSceneChanging_ = true;
+		//決定音再生
+		decideSE_->Play();
 	}
 
 }
