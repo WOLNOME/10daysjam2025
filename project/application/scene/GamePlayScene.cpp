@@ -16,7 +16,7 @@ void GamePlayScene::Initialize() {
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
 	map_ = std::make_unique<Map>();
-	map_->Initialize("Stage_Test.csv");
+	map_->Initialize("Monkey_Tutorial");
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
