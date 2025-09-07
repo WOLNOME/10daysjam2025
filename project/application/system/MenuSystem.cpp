@@ -96,7 +96,7 @@ void MenuSystem::Update() {
 	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
 		switch (selectState_) {
 		case SelectState::Play:
-			SceneManager::GetInstance()->SetNextScene("STAGESELECT");
+  			SceneManager::GetInstance()->SetNextScene("STAGESELECT");
 			break;
 		case SelectState::Tutorial:
 			SceneManager::GetInstance()->SetNextScene("TUTORIAL");

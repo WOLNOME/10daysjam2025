@@ -137,6 +137,7 @@
     <ClCompile Include="application\scene\TutorialScene.cpp" />
     <ClCompile Include="application\system\StageSelectSystem.cpp" />
     <ClCompile Include="application\system\PoseSystem.cpp" />
+    <ClCompile Include="application\system\RedoUndoSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -262,6 +263,7 @@
     <ClInclude Include="application\system\StageSelectSystem.h" />
     <ClInclude Include="application\system\PoseSystem.h" />
     <ClInclude Include="application\map\MapTypes.h" />
+    <ClInclude Include="application\system\RedoUndoSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />
