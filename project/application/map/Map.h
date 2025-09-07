@@ -5,9 +5,6 @@
 #include <optional>
 #include "application/map/MapTypes.h"
 
-//enum class ActorKind { Dog, Monkey };   // 誰の判定か
-//
-//struct GridPos { int x; int y; };       // グリッド座標
 
 class Map
 {
@@ -34,6 +31,10 @@ public:
 
 	// (gx,gy) の L2 に BlockMonkey があるか？
 	bool HasBlockMonkeyAt(int gx, int gy) const;
+
+	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
+	bool IsGoalFor(ActorKind who, int gx, int gy) const;
+
 
 
 private:

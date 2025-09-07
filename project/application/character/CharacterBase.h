@@ -24,6 +24,12 @@ public:
 		if (character_) { character_->worldTransform.translate = p; }
 	}
 
+	// ゴール時の演出：Y回転を加える
+	void AddYaw(float delta) {
+		if (character_) { character_->worldTransform.rotate.y += delta; }
+	}
+
+
 protected:
 
 	//3Dオブジェクト

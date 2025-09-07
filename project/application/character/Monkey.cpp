@@ -12,5 +12,5 @@ void Monkey::Initialize()
 
 void Monkey::Update()
 {
-	character_->worldTransform.rotate.y -= 0.03f;
+	//character_->worldTransform.rotate.y -= 0.03f;
 }

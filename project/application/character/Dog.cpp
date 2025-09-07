@@ -11,5 +11,5 @@ void Dog::Initialize()
 
 void Dog::Update()
 {
-	character_->worldTransform.rotate.y -= 0.03f;
+	//character_->worldTransform.rotate.y -= 0.03f;
 }
