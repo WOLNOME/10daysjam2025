@@ -5,9 +5,6 @@
 #include <optional>
 #include "application/map/MapTypes.h"
 
-//enum class ActorKind { Dog, Monkey };   // 誰の判定か
-//
-//struct GridPos { int x; int y; };       // グリッド座標
 
 class Map
 {

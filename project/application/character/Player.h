@@ -49,5 +49,22 @@ private:
 	void TryStep(Active who, int dx, int dy, Map& map);
 	void SnapToWorld(Active who, const Map& map);
 
+	// 1マス移動のイージング用
+	struct Tween {
+		bool    active = false;
+		float   t = 0.0f;         // 0→1
+		float   duration = 0.15f;
+		Vector3 from{};
+		Vector3 to{};
+	};
+	Tween dogTween_;
+	Tween monkeyTween_;
+	float moveDuration_ = 0.25f;  // 1マスの所要時間
+
+	// Tween開始・更新
+	void BeginTween(Active who, const Vector3& from, const Vector3& to, float durationSec);
+	void UpdateTweens(float dtSec);
+
+
 };
 
