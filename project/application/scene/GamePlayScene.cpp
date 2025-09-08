@@ -16,13 +16,15 @@ void GamePlayScene::Initialize() {
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
 	map_ = std::make_unique<Map>();
-	map_->Initialize("Stage_Test2");
+	map_->Initialize("Stage_Test5");
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize(*map_);
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();
+	
+	
 }
 
 void GamePlayScene::Finalize() {
