@@ -103,6 +103,8 @@ void Player::TryStep(Active who, int dx, int dy, Map& map)
             g.x = nx; g.y = ny;
             const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
             BeginTween(Active::Dog, from, to, moveDuration_);
+
+            map.OnPlayerStepped(ActorKind::Dog, g.x, g.y);
         }
         return;
     }
@@ -112,6 +114,8 @@ void Player::TryStep(Active who, int dx, int dy, Map& map)
         g.x = nx; g.y = ny;
         const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
         BeginTween(Active::Monkey, from, to, moveDuration_);
+
+        map.OnPlayerStepped(ActorKind::Monkey, g.x, g.y);
     }
 }
 
