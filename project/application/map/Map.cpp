@@ -202,6 +202,16 @@ bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos&
 	Vector3 newPos = GridToWorld(tx, ty, tileSize_);
 	block->SetWorldPosition(newPos);
 
+	//押した後の状態をRedoUndoシステムに保存
+	CsvMapData newState = redoUndoSystem_->reflectionMapState();
+	//箱の旧位置に空のオブジェクトをセット&犬の位置をそこに
+	newState.layer2[ny][nx] = MapChipType::Empty;
+	newState.spawnDog = { (float)nx,(float)ny };
+	//箱の新位置に箱をセット
+	newState.layer2[ty][tx] = MapChipType::BlockMonkey;
+	redoUndoSystem_->AddNewHistory(newState);
+
+
 	return true;
 
 }

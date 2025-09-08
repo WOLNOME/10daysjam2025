@@ -115,14 +115,16 @@ void Player::RedoUndo(Map& map) {
 		SnapToWorld(Active::Monkey, map);
 		};
 
-	if (in->TriggerKey(DIK_Z)) {
+	if (in->TriggerKey(DIK_Z)||in->TriggerPadButton(GamepadButton::LeftShoulder)) {
 		if (map.GetRedoUndoSystem()->Redo()) {
 			restore(map.GetRedoUndoSystem()->reflectionMapState());
+			map.csvMapData_ = map.GetRedoUndoSystem()->reflectionMapState();
 		}
 	}
-	else if (in->TriggerKey(DIK_Y)) {
+	else if (in->TriggerKey(DIK_Y)||in->TriggerPadButton(GamepadButton::RightShoulder)) {
 		if (map.GetRedoUndoSystem()->Undo()) {
 			restore(map.GetRedoUndoSystem()->reflectionMapState());
+			map.csvMapData_ = map.GetRedoUndoSystem()->reflectionMapState();
 		}
 	}
 }
@@ -148,6 +150,11 @@ void Player::TryStep(Active who, int dx, int dy, Map& map) {
 		if (map.IsWalkableFor(ActorKind::Dog, nx, ny)) {
 			g.x = nx; g.y = ny;
 			SnapToWorld(who, map);
+
+			//RedoUndoシステムに犬の移動を保存
+			CsvMapData newState = map.GetRedoUndoSystem()->reflectionMapState();
+			newState.spawnDog = { (float)g.x,(float)g.y };
+			map.GetRedoUndoSystem()->AddNewHistory(newState);
 		}
 		return;
 	}
@@ -156,6 +163,11 @@ void Player::TryStep(Active who, int dx, int dy, Map& map) {
 	if (map.IsWalkableFor(ActorKind::Monkey, nx, ny)) {
 		g.x = nx; g.y = ny;
 		SnapToWorld(who, map);
+
+		//RedoUndoシステムに猿の移動を保存
+		CsvMapData newState = map.GetRedoUndoSystem()->reflectionMapState();
+		newState.spawnMonkey = { (float)g.x,(float)g.y };
+		map.GetRedoUndoSystem()->AddNewHistory(newState);
 	}
 }
 

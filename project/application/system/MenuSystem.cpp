@@ -96,22 +96,29 @@ void MenuSystem::Update() {
 	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
 		switch (selectState_) {
 		case SelectState::Play:
-  			SceneManager::GetInstance()->SetNextScene("STAGESELECT");
+			if (SceneManager::GetInstance()->SetNextScene("STAGESELECT")) {
+				isSceneChanging_ = true;
+				//決定音再生
+				decideSE_->Play();
+			}
 			break;
 		case SelectState::Tutorial:
-			SceneManager::GetInstance()->SetNextScene("TUTORIAL");
+			if (SceneManager::GetInstance()->SetNextScene("TUTORIAL")) {
+				isSceneChanging_ = true;
+				//決定音再生
+				decideSE_->Play();
+			}
 			break;
 		}
-		isSceneChanging_ = true;
-		//決定音再生
-		decideSE_->Play();
+
 	}
 	//エスケープキーorBボタンで前のシーンへ
 	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {
-		SceneManager::GetInstance()->SetNextScene("TITLE");
-		isSceneChanging_ = true;
-		//決定音再生
-		decideSE_->Play();
+		if (SceneManager::GetInstance()->SetNextScene("TITLE")) {
+			isSceneChanging_ = true;
+			//決定音再生
+			decideSE_->Play();
+		}
 	}
 }
 

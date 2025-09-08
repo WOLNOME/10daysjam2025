@@ -1,8 +1,25 @@
 #include "RedoUndoSystem.h"
+#include <SpriteManager.h>
+#include <TextTextureManager.h>
 
 void RedoUndoSystem::Initialize(const CsvMapData& initialMap) {
 	//初期マップの読み込み
 	redoUndoList_.push_back(initialMap);
+
+	//テキスト
+	TextParam textParam;
+	textParam.text = L"[Z]・(LB):Redo [Y]・(RB):Undo";
+	textParam.font = Font::UDDegitalN_B;
+	textParam.fontStyle = FontStyle::Normal;
+	textParam.size = 24.0f;
+	textParam.color = { 1.0f,1.0f,1.0f,1.0f };
+	textTexture_ = TextTextureManager::GetInstance()->LoadTextTexture(textParam);
+	textSprite_ = std::make_unique<Sprite>();
+	textSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("redoUndoText"), Sprite::Order::Front2);
+	textSprite_->SetTexture(textTexture_);
+	textSprite_->SetPosition({ 20,20 });
+	textSprite_->SetAnchorPoint({ 0.0f,0.0f });
+	textSprite_->SetIsDisplay(true);
 
 }
 

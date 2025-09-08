@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <Sprite.h>
+#include <Handle.h>
+#include <memory>
 
 //アプリケーション
 #include <application/map/CsvLoader.h>
@@ -24,5 +27,9 @@ private:
 	int currentHistoryIndex_ = 0;
 	// 変更履歴リスト
 	std::vector<CsvMapData> redoUndoList_;
+
+	//テキストUI
+	std::unique_ptr<Sprite> textSprite_ = nullptr;
+	Handle textTexture_;
 };
 

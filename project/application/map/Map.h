@@ -42,7 +42,7 @@ public:
 
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
-	
+
 	// layer2 上の BlockMonkey の配置 -> Block* を保持
 	// サイズは [height][width]。BlockMonkey があるセルに対応する Block* を格納（なければ nullptr）
 	std::vector<std::vector<Block*>> l2BlockAt_;
@@ -53,16 +53,15 @@ public:
 	std::vector<std::unique_ptr<Block>> blocksL2_;
 	// 床ブロックの高さ（scale.y）
 	float   blockScaleY_ = 1.0f;
+	CsvMapData csvMapData_;
 
 private:
 
 	//RedoUndoシステム
-	std::unique_ptr<RedoUndoSystem> redoUndoSystem_ = nullptr
-		;
+	std::unique_ptr<RedoUndoSystem> redoUndoSystem_ = nullptr;
 	// タイル→ワールド変換
 	float   tileSize_ = 2.0f;
 	Vector3 origin_ = { 0,0,0 };
-	CsvMapData csvMapData_;
 	float   overlayYOffset_ = 0.01f;
 
 	// グリッド→ワールド座標変換
