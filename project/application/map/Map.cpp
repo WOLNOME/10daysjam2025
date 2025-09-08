@@ -1,20 +1,5 @@
 #include "Map.h"
 
-namespace {
-	inline bool IsRenderable(MapChipType t) {
-		switch (t) {
-		case MapChipType::FloorDog:
-		case MapChipType::FloorMonkey:
-		case MapChipType::BlockMonkey:
-		case MapChipType::GoalDog:
-		case MapChipType::GoalMonkey:
-			return true;            // モデルがあるタイルだけ描画
-		default:
-			return false;
-		}
-	}
-}
-
 void Map::Initialize(const std::string& filepath) {
 	CsvLoader loader;
 	loader.Initialize();
@@ -23,13 +8,15 @@ void Map::Initialize(const std::string& filepath) {
 	blocksL1_.clear();
 	blocksL2_.clear();
 
+	//RedoUndoシステムの初期化
+	redoUndoSystem_ = std::make_unique<RedoUndoSystem>();
+	redoUndoSystem_->Initialize(csvMapData_);
+
 	// 初期化の前にテーブルをリサイズしておく（Initialize の冒頭あたり）
 	l2BlockAt_.assign(
 		csvMapData_.height,
 		std::vector<Block*>(csvMapData_.width, nullptr)
 	);
-
-
 
 	auto tileToWorld = [&](int x, int y, float yOffset = 0.0f) {
 
@@ -75,9 +62,7 @@ void Map::Initialize(const std::string& filepath) {
 			//blockScaleY_ = blk->GetScaleY();
 			blocksL2_.push_back(std::move(blk));
 		}
-
 	}
-
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const
@@ -227,6 +212,18 @@ bool Map::HasBlockMonkeyAt(int gx, int gy) const
 	return csvMapData_.layer2[gy][gx] == MapChipType::BlockMonkey;
 }
 
+bool Map::IsRenderable(MapChipType t) {
+	switch (t) {
+	case MapChipType::FloorDog:
+	case MapChipType::FloorMonkey:
+	case MapChipType::BlockMonkey:
+	case MapChipType::GoalDog:
+	case MapChipType::GoalMonkey:
+		return true;            // モデルがあるタイルだけ描画
+	default:
+		return false;
+	}
+}
 
 Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 {

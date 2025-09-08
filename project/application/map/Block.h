@@ -23,6 +23,11 @@ public:
 		if (object3d_) { object3d_->worldTransform.translate = p; }
 	}
 
+	// オブジェクトを空にする(RedoUndoで使用)
+	void ClearObject() {
+		object3d_.reset();
+	}
+
 
 private:
 	std::unique_ptr<Object3d> object3d_ = nullptr;
