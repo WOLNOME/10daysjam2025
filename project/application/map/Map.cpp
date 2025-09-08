@@ -3,11 +3,15 @@
 namespace {
 	inline bool IsRenderable(MapChipType t) {
 		switch (t) {
-		case MapChipType::FloorDog:
-		case MapChipType::FloorMonkey:
-		case MapChipType::BlockMonkey:
-		case MapChipType::GoalDog:
-		case MapChipType::GoalMonkey:
+		case MapChipType::FloorDog:		// 犬のフロア : 3
+		case MapChipType::FloorMonkey:	// 猿のフロア : 4
+		case MapChipType::BlockMonkey:	// 猿のフロア（犬が押せる） : 5
+		case MapChipType::GoalDog:		// 犬のゴール : 6
+		case MapChipType::GoalMonkey:	// 猿のゴール : 7
+		case MapChipType::SwitchOff:	// スイッチ（Off状態） : 8
+		case MapChipType::SwitchOn:		// スイッチ（On状態） : 9
+		case MapChipType::BootBlockOff: // ブーツブロック（Off状態） : 10
+		case MapChipType::BootBlockOn:	// ブーツブロック（On状態） : 11
 			return true;            // モデルがあるタイルだけ描画
 		default:
 			return false;

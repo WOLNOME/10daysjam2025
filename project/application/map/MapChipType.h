@@ -9,6 +9,10 @@ enum class MapChipType {
 	BlockMonkey = 5,	// 猿の足場 / 犬が動かせる
 	GoalDog = 6,		// 犬のゴール
 	GoalMonkey = 7,		// 猿のゴール
+	SwitchOff = 8, 		// スイッチ（Off状態）
+	SwitchOn = 9,		// スイッチ（On状態）
+	BootBlockOff = 10, // ブーツブロック（Off状態）
+	BootBlockOn = 11,  // ブーツブロック（On状態）
 
 	kMaxNumMapChipType,
 };
@@ -24,6 +28,10 @@ inline std::string ToFile(MapChipType t) {
 	case MapChipType::BlockMonkey:  return "floorMonkey";
 	case MapChipType::GoalDog:      return "goalDog";
 	case MapChipType::GoalMonkey:   return "goalMonkey";
+	case MapChipType::SwitchOff:    return "switchOff";
+	case MapChipType::SwitchOn:     return "switchOn";
+	case MapChipType::BootBlockOff: return "bootBlockOff";
+	case MapChipType::BootBlockOn:  return "bootBlockOn";
 	default:                        return "Empty"; // フォールバック
 	}
 }
