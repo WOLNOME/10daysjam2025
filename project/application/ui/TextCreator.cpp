@@ -56,10 +56,32 @@ void TextCreator::AddText(std::wstring _addText) {
 }
 
 void TextCreator::Operator() {
-	
-
+	//文章表示中の時
+	if(isDisplayText_) {
+		//文章書き込み中の時
+		if (isWritingText_) {
+			//スペースキーorAボタンで文章スキップ
+			if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+				isSkipText_ = true;
+			}
+		}
+		//文章書き終わっているとき
+		else if (isFinishedText_) {
+			//スペースキーorAボタンで次の文章へ
+			if (input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) {
+				isNextText_ = true;
+			}
+		}
+	}
 }
 
 void TextCreator::ShowText() {
+	//リストに文字が追加されたら枠を表示
+	if (!isDisplayText_ && !textLists_.empty()) {
+		frameDisplayTimer_ += kDeltaTime;
+		frame_
+		float alpha=MyMath::Lerp(0.0f,1.0f)
+	}
+
 }
 

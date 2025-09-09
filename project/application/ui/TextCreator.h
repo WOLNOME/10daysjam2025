@@ -1,5 +1,6 @@
 #pragma once
 #include <Input.h>
+#include <MyMath.h>
 #include <Handle.h>
 #include <Sprite.h>
 #include <TextTextureManager.h>
@@ -48,5 +49,16 @@ private:
 
 	//テキスト表示するかフラグ
 	bool isDisplayText_ = false;
+	//文章書き込み中フラグ
+	bool isWritingText_ = false;
+	bool isSkipText_ = false;
+	//文章書き終わりフラグ
+	bool isFinishedText_ = false;
+	bool isNextText_ = false;
+	
+	//枠の表示非表示変数
+	const float frameDisplayTime_ = 1.0f;
+	float frameDisplayTimer_ = 0.0f;
+
 };
 
