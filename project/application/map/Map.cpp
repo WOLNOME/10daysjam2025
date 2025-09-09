@@ -23,6 +23,10 @@ void Map::Initialize(const std::string& filepath) {
 	l1BootAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
 	l2BootAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
 
+	// スイッチ参照
+	l1SwitchAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
+	l2SwitchAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
+
 
 
 	auto tileToWorld = [&](int x, int y, float yOffset = 0.0f) {
@@ -50,6 +54,12 @@ void Map::Initialize(const std::string& filepath) {
 				const float yOff = (t == MapChipType::BootBlockOff) ? 0.0f : tileSize_;
 				blk->SetWorldPosition(GridToWorld(x, y, yOff));
 			}
+
+			// スイッチ参照
+			if (t == MapChipType::SwitchOff || t == MapChipType::SwitchOn) {
+				l1SwitchAt_[y][x] = blk.get();
+			}
+
 			//blockScaleY_ = blk->GetScaleY();
 			// 最初に見つけた“床”で一度だけ取得（以後は固定）
 			if (!blockScaleCaptured_ &&
@@ -85,6 +95,12 @@ void Map::Initialize(const std::string& filepath) {
 			if (t == MapChipType::BlockMonkey) {
 				l2BlockAt_[y][x] = blk.get();
 			}
+
+			// スイッチ参照
+			if (t == MapChipType::SwitchOff || t == MapChipType::SwitchOn) {
+				l2SwitchAt_[y][x] = blk.get();
+			}
+
 			//blockScaleY_ = blk->GetScaleY();
 			// 最初に見つけた“床”で一度だけ取得（以後は固定）
 			if (!blockScaleCaptured_ &&
@@ -280,37 +296,31 @@ void Map::OnPlayerStepped(ActorKind who, int gx, int gy)
 {
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return;
 
-	// 犬が踏んでも何もしない（BootBlock はサルだけで制御）
-	if (who == ActorKind::Dog) {
+	// 触れたプレイヤーが見るレイヤとスイッチ参照テーブルを選ぶ
+	auto& layer = (who == ActorKind::Dog) ? csvMapData_.layer1 : csvMapData_.layer2;
+	auto& switchAt = (who == ActorKind::Dog) ? l1SwitchAt_ : l2SwitchAt_;
+	MapChipType& t = layer[gy][gx];
+
+	// SwitchOff → SwitchOn（見た目も変更）＋ BootBlock をすべて On へ
+	if (t == MapChipType::SwitchOff) {
+		t = MapChipType::SwitchOn;
+		if (Block* b = switchAt[gy][gx]) {
+			b->ReplaceVisual(MapChipType::SwitchOn);
+		}
+		SetAllBootBlocks(true);
+		return;
+	}
+	// SwitchOn → SwitchOff（見た目も変更）＋ BootBlock をすべて Off へ
+	if (t == MapChipType::SwitchOn) {
+		t = MapChipType::SwitchOff;
+		if (Block* b = switchAt[gy][gx]) {
+			b->ReplaceVisual(MapChipType::SwitchOff);
+		}
+		SetAllBootBlocks(false);
 		return;
 	}
 
-	// ここからサル（Monkey）のみ
-	auto& L2 = csvMapData_.layer2;
-	MapChipType& t2 = L2[gy][gx];
-
-	// 1) サルがスイッチを踏んだら全ブーツを連動
-	if (t2 == MapChipType::SwitchOff) {
-		t2 = MapChipType::SwitchOn;     // スイッチ自身も On に
-		SetAllBootBlocks(true);         // すべて上げる（On）
-		return;
-	}
-	if (t2 == MapChipType::SwitchOn) {
-		t2 = MapChipType::SwitchOff;    // スイッチ自身も Off に
-		SetAllBootBlocks(false);        // すべて下げる（Off）
-		return;
-	}
-
-	// 2) サルが BootBlock 上に乗ったら個別にトグル（On → Off のみ）
-	//    ※ Off → On はスイッチからのみ起こす仕様
-	//    BootBlock は layer1 / layer2 のどちらにある可能性もあるので両方見る
-	const auto isBootOnL1 = (csvMapData_.layer1[gy][gx] == MapChipType::BootBlockOn);
-	const auto isBootOnL2 = (csvMapData_.layer2[gy][gx] == MapChipType::BootBlockOn);
-
-	if (isBootOnL1 || isBootOnL2) {
-		SetBootBlockAt(gx, gy, false);  // そのマスだけ Off（下げる）
-		return;
-	}
+	// ※ブーツブロックの上に乗った時の個別トグルは無効化（今回仕様）
 }
 
 void Map::SetAllBootBlocks(bool toOn)
@@ -322,12 +332,14 @@ void Map::SetAllBootBlocks(bool toOn)
 			if (t == MapChipType::BootBlockOff && toOn) {
 				t = MapChipType::BootBlockOn;
 				if (Block* b = l1BootAt_[y][x]) {
+					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_)); // On は猿側の高さ
 				}
 			}
 			else if (t == MapChipType::BootBlockOn && !toOn) {
 				t = MapChipType::BootBlockOff;
 				if (Block* b = l1BootAt_[y][x]) {
+					b->ReplaceVisual(MapChipType::BootBlockOff);
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));      // Off は犬側の高さ
 				}
 			}
@@ -340,12 +352,14 @@ void Map::SetAllBootBlocks(bool toOn)
 			if (t == MapChipType::BootBlockOff && toOn) {
 				t = MapChipType::BootBlockOn;
 				if (Block* b = l2BootAt_[y][x]) {
+					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_));
 				}
 			}
 			else if (t == MapChipType::BootBlockOn && !toOn) {
 				t = MapChipType::BootBlockOff;
 				if (Block* b = l2BootAt_[y][x]) {
+					b->ReplaceVisual(MapChipType::BootBlockOff);
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));
 				}
 			}
@@ -360,6 +374,7 @@ void Map::SetBootBlockAt(int gx, int gy, bool toOn)
 	if (t1 == MapChipType::BootBlockOff && toOn) {
 		t1 = MapChipType::BootBlockOn;
 		if (Block* b = l1BootAt_[gy][gx]) {
+			b->ReplaceVisual(MapChipType::BootBlockOn);
 			b->SetWorldPosition(GridToWorld(gx, gy, tileSize_));
 		}
 		return;
@@ -367,6 +382,7 @@ void Map::SetBootBlockAt(int gx, int gy, bool toOn)
 	if (t1 == MapChipType::BootBlockOn && !toOn) {
 		t1 = MapChipType::BootBlockOff;
 		if (Block* b = l1BootAt_[gy][gx]) {
+			b->ReplaceVisual(MapChipType::BootBlockOff);
 			b->SetWorldPosition(GridToWorld(gx, gy, 0.0f));
 		}
 		return;
@@ -377,6 +393,7 @@ void Map::SetBootBlockAt(int gx, int gy, bool toOn)
 	if (t2 == MapChipType::BootBlockOff && toOn) {
 		t2 = MapChipType::BootBlockOn;
 		if (Block* b = l2BootAt_[gy][gx]) {
+			b->ReplaceVisual(MapChipType::BootBlockOn);
 			b->SetWorldPosition(GridToWorld(gx, gy, tileSize_));
 		}
 		return;
@@ -384,6 +401,7 @@ void Map::SetBootBlockAt(int gx, int gy, bool toOn)
 	if (t2 == MapChipType::BootBlockOn && !toOn) {
 		t2 = MapChipType::BootBlockOff;
 		if (Block* b = l2BootAt_[gy][gx]) {
+			b->ReplaceVisual(MapChipType::BootBlockOff);
 			b->SetWorldPosition(GridToWorld(gx, gy, 0.0f));
 		}
 		return;

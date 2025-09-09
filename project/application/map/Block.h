@@ -20,8 +20,14 @@ public:
 
 	// ワールド座標を直接セット（押し移動で使用）
 	void SetWorldPosition(const Vector3& p) {
-		if (object3d_) { object3d_->worldTransform.translate = p; }
+		if (object3d_) { 
+			object3d_->worldTransform.translate = p;
+			object3d_->worldTransform.UpdateMatrix();
+		}
 	}
+
+	// モデル（見た目）をタイプに合わせて差し替える
+	void ReplaceVisual(MapChipType newType);
 
 
 private:

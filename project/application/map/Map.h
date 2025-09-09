@@ -69,6 +69,10 @@ private:
 	std::vector<std::vector<Block*>> l1BootAt_;
 	std::vector<std::vector<Block*>> l2BootAt_;
 
+	// スイッチ(Off/On)のブロック参照テーブル
+	std::vector<std::vector<Block*>> l1SwitchAt_;
+	std::vector<std::vector<Block*>> l2SwitchAt_;
+
 	bool blockScaleCaptured_ = false;
 ;
 	// タイル→ワールド変換
