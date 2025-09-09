@@ -329,14 +329,14 @@ void Map::SetAllBootBlocks(bool toOn)
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
 			auto& t = csvMapData_.layer1[y][x];
-			if (t == MapChipType::BootBlockOff && toOn) {
+			if (t == MapChipType::BootBlockOff && !toOn) {
 				t = MapChipType::BootBlockOn;
 				if (Block* b = l1BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_)); // On は猿側の高さ
 				}
 			}
-			else if (t == MapChipType::BootBlockOn && !toOn) {
+			else if (t == MapChipType::BootBlockOn && toOn) {
 				t = MapChipType::BootBlockOff;
 				if (Block* b = l1BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOff);
