@@ -16,7 +16,10 @@ void GamePlayScene::Initialize() {
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
 	map_ = std::make_unique<Map>();
-	map_->Initialize("Stage_Test5");
+	map_->Initialize("Dog_Tutorial");
+	StageCamera stageCamera = map_->GetStageCameraVal();
+	camera_->worldTransform.translate = stageCamera.overLooking.position;
+	camera_->worldTransform.rotate = stageCamera.overLooking.rotate;
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize(*map_);
@@ -56,5 +59,8 @@ void GamePlayScene::Update() {
 void GamePlayScene::DebugWithImGui() {
 #ifdef _DEBUG
 	poseSystem_->DebugWithImGui();
+	ImGui::Separator();
+	camera_->DebugWithImGui();
+
 #endif // _DEBUG
 }
