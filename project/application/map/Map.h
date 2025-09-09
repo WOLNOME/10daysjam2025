@@ -42,9 +42,9 @@ public:
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
 	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
-	void OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos, const GridPos& monkeyPos);
+	void OnPlayerStepped(ActorKind who, int gx, int gy, const GridPos& dogPos, const GridPos& monkeyPos);
 
-	void SetAllBootBlocks(bool toOn);
+	void SetAllBootBlocks(bool toOn, int gx, int gy);
 	void SetBootBlockAt(int gx, int gy, bool toOn);
 
 
@@ -74,7 +74,7 @@ private:
 	std::vector<std::vector<Block*>> l2SwitchAt_;
 
 	bool blockScaleCaptured_ = false;
-;
+	;
 	// タイル→ワールド変換
 	float   tileSize_ = 2.0f;
 	Vector3 origin_ = { 0,0,0 };

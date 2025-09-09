@@ -66,7 +66,7 @@ void Map::Initialize(const std::string& filepath) {
 				(t == MapChipType::FloorDog || t == MapChipType::FloorMonkey)) {
 				blockScaleY_ = blk->GetScaleY();
 				blockScaleCaptured_ = true;
-	
+
 			}
 			blocksL1_.push_back(std::move(blk));
 		}
@@ -114,8 +114,7 @@ void Map::Initialize(const std::string& filepath) {
 	}
 }
 
-std::optional<Vector3> Map::GetDogSpawnWorld() const
-{
+std::optional<Vector3> Map::GetDogSpawnWorld() const {
 	// CsvLoader がセットした spawnDog を使う（見つからなければ x,y は負）
 	const int gx = static_cast<int>(csvMapData_.spawnDog.x);
 	const int gy = static_cast<int>(csvMapData_.spawnDog.y);
@@ -125,8 +124,7 @@ std::optional<Vector3> Map::GetDogSpawnWorld() const
 	return std::nullopt;
 }
 
-std::optional<Vector3> Map::GetMonkeySpawnWorld() const
-{
+std::optional<Vector3> Map::GetMonkeySpawnWorld() const {
 	const int gx = static_cast<int>(csvMapData_.spawnMonkey.x);
 	const int gy = static_cast<int>(csvMapData_.spawnMonkey.y);
 	if (gx >= 0 && gy >= 0) {
@@ -135,22 +133,19 @@ std::optional<Vector3> Map::GetMonkeySpawnWorld() const
 	return std::nullopt;
 }
 
-std::optional<GridPos> Map::GetDogSpawnGrid() const
-{
+std::optional<GridPos> Map::GetDogSpawnGrid() const {
 	if (csvMapData_.spawnDog.x >= 0 && csvMapData_.spawnDog.y >= 0)
 		return GridPos{ (int)csvMapData_.spawnDog.x, (int)csvMapData_.spawnDog.y };
 	return std::nullopt;
 }
 
-std::optional<GridPos> Map::GetMonkeySpawnGrid() const
-{
+std::optional<GridPos> Map::GetMonkeySpawnGrid() const {
 	if (csvMapData_.spawnMonkey.x >= 0 && csvMapData_.spawnMonkey.y >= 0)
 		return GridPos{ (int)csvMapData_.spawnMonkey.x, (int)csvMapData_.spawnMonkey.y };
 	return std::nullopt;
 }
 
-bool Map::IsWalkableFor(ActorKind who, int gx, int gy) const
-{
+bool Map::IsWalkableFor(ActorKind who, int gx, int gy) const {
 	// 範囲チェック
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
 
@@ -207,14 +202,12 @@ bool Map::IsWalkableFor(ActorKind who, int gx, int gy) const
 	}
 }
 
-Vector3 Map::WorldFromGridFor(ActorKind who, int gx, int gy) const
-{
+Vector3 Map::WorldFromGridFor(ActorKind who, int gx, int gy) const {
 	const float y = (who == ActorKind::Dog) ? (0.0f + blockScaleY_) : (tileSize_ + blockScaleY_);
 	return GridToWorld(gx, gy, y);
 }
 
-bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos& monkeyPos)
-{
+bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos& monkeyPos) {
 	const int nx = dogGx + dx; // 犬の次マス（箱の現在地想定）
 	const int ny = dogGy + dy;
 	const int tx = nx + dx;    // 箱の移動先
@@ -272,14 +265,12 @@ bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos&
 
 }
 
-bool Map::HasBlockMonkeyAt(int gx, int gy) const
-{
+bool Map::HasBlockMonkeyAt(int gx, int gy) const {
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
 	return csvMapData_.layer2[gy][gx] == MapChipType::BlockMonkey;
 }
 
-bool Map::IsGoalFor(ActorKind who, int gx, int gy) const
-{
+bool Map::IsGoalFor(ActorKind who, int gx, int gy) const {
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return false;
 
 	if (who == ActorKind::Dog) {
@@ -292,8 +283,7 @@ bool Map::IsGoalFor(ActorKind who, int gx, int gy) const
 	}
 }
 
-void Map::OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos, const GridPos& monkeyPos)
-{
+void Map::OnPlayerStepped(ActorKind who, int gx, int gy, const GridPos& dogPos, const GridPos& monkeyPos) {
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return;
 
 	auto inBounds = [&](const GridPos& p) {
@@ -323,7 +313,7 @@ void Map::OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos,
 		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
 			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOn); }
 		}
-		SetAllBootBlocks(true);   // 全部 On（上げる）
+		SetAllBootBlocks(true, gx, gy);   // 全部 On（上げる）
 		return;
 	}
 	if (t2 == MapChipType::SwitchOn) {
@@ -331,15 +321,18 @@ void Map::OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos,
 		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
 			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOff); }
 		}
-		SetAllBootBlocks(false);  // 全部 Off（下げる）
+		SetAllBootBlocks(false, gx, gy);  // 全部 Off（下げる）
 		return;
 	}
 
 	// ※ 今回仕様：ブーツ上に乗っての個別トグルは行わない
 }
 
-void Map::SetAllBootBlocks(bool toOn)
-{
+void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
+	//RedoUndo状態保存用変数
+	CsvMapData newState = redoUndoSystem_->reflectionMapState();
+	newState.spawnMonkey = { (float)gx,(float)gy };
+
 	// layer1
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
@@ -349,6 +342,9 @@ void Map::SetAllBootBlocks(bool toOn)
 				if (Block* b = l1BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_)); // On は猿側の高さ
+
+					//RedoUndo用に状態を保存
+					newState.layer1[y][x] = MapChipType::Empty;
 				}
 			}
 			else if (t == MapChipType::BootBlockOn && toOn) {
@@ -356,6 +352,9 @@ void Map::SetAllBootBlocks(bool toOn)
 				if (Block* b = l1BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOff);
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));      // Off は犬側の高さ
+
+					//RedoUndo用に状態を保存
+					newState.layer1[y][x] = MapChipType::BootBlockOff;
 				}
 			}
 		}
@@ -369,6 +368,9 @@ void Map::SetAllBootBlocks(bool toOn)
 				if (Block* b = l2BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_));
+
+					//RedoUndo用に状態を保存
+					newState.layer2[y][x] = MapChipType::BootBlockOn;
 				}
 			}
 			else if (t == MapChipType::BootBlockOn && !toOn) {
@@ -376,14 +378,30 @@ void Map::SetAllBootBlocks(bool toOn)
 				if (Block* b = l2BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOff);
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));
+
+					//RedoUndo用に状態を保存
+					newState.layer2[y][x] = MapChipType::Empty;
 				}
+			}
+			//スイッチオフ
+			else if (t == MapChipType::SwitchOn && !toOn) {
+				//RedoUndo用に状態を保存
+				newState.layer2[y][x] = MapChipType::SwitchOff;
+
+			}
+			//スイッチオン
+			else if (t == MapChipType::SwitchOff && toOn) {
+				//RedoUndo用に状態を保存
+				newState.layer2[y][x] = MapChipType::SwitchOn;
 			}
 		}
 	}
+
+	//RedoUndoに保存
+	redoUndoSystem_->AddNewHistory(newState);
 }
 
-void Map::SetBootBlockAt(int gx, int gy, bool toOn)
-{
+void Map::SetBootBlockAt(int gx, int gy, bool toOn) {
 	// layer1 にある場合
 	auto& t1 = csvMapData_.layer1[gy][gx];
 	if (t1 == MapChipType::BootBlockOff && toOn) {
@@ -440,8 +458,7 @@ bool Map::IsRenderable(MapChipType t) {
 	}
 }
 
-Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
-{
+Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const {
 	// CSVは上→下の行順なので、既存描画と同じくY軸を反転
 	int flippedY = (csvMapData_.height - 1) - gy;
 	return Vector3{
@@ -451,8 +468,7 @@ Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 	};
 }
 
-std::optional<Vector3> Map::FindStartOnLayer(const std::vector<std::vector<MapChipType>>& layer, MapChipType target, float yOffset) const
-{
+std::optional<Vector3> Map::FindStartOnLayer(const std::vector<std::vector<MapChipType>>& layer, MapChipType target, float yOffset) const {
 	for (int y = 0; y < (int)layer.size(); ++y) {
 		for (int x = 0; x < (int)layer[y].size(); ++x) {
 			if (layer[y][x] == target) {
