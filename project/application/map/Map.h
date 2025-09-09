@@ -35,7 +35,11 @@ public:
 	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
 	bool IsGoalFor(ActorKind who, int gx, int gy) const;
 
+	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
+	void OnPlayerStepped(ActorKind who, int gx, int gy);
 
+	void SetAllBootBlocks(bool toOn);
+	void SetBootBlockAt(int gx, int gy, bool toOn);
 
 private:
 
@@ -47,6 +51,12 @@ private:
 	std::vector<std::unique_ptr<Block>> blocksL1_;
 	// 二層
 	std::vector<std::unique_ptr<Block>> blocksL2_;
+
+	// BootBlock のブロック参照テーブル（描画オブジェクトのYを切替用）
+	std::vector<std::vector<Block*>> l1BootAt_;
+	std::vector<std::vector<Block*>> l2BootAt_;
+
+	bool blockScaleCaptured_ = false;
 ;
 	// タイル→ワールド変換
 	float   tileSize_ = 2.0f;
