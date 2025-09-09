@@ -9,8 +9,9 @@ void MenuSystem::Initialize() {
 	input_ = Input::GetInstance();
 	//背景スプライト生成
 	backSprite_ = std::make_unique<Sprite>();
-	backTexture_ = TextureManager::GetInstance()->LoadTexture("black.png");
+	backTexture_ = TextureManager::GetInstance()->LoadTexture("souko.png");
 	backSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("back"), Sprite::Order::Back0, backTexture_);
+	backSprite_->SetSize({ 1280.0f,720.0f });
 	backSprite_->SetPosition({ 0,0 });
 	backSprite_->SetAnchorPoint({ 0,0 });
 	//メニューテキストスプライト生成
@@ -37,8 +38,7 @@ void MenuSystem::Initialize() {
 	playTextTexture_ = TextTextureManager::GetInstance()->LoadTextTexture(playTextParam);
 	playTextSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("play"), Sprite::Order::Back1);
 	playTextSprite_->SetTexture(playTextTexture_);
-	playTextSprite_->SetPosition({ 640,240 });
-	playTextSprite_->SetAnchorPoint({ 0.5f,0.5f });
+	playTextSprite_->SetPosition({ 30,240 });
 	//チュートリアルテキストスプライト生成
 	tutorialTextSprite_ = std::make_unique<Sprite>();
 	TextParam tutorialTextParam;
@@ -50,8 +50,7 @@ void MenuSystem::Initialize() {
 	tutorialTextTexture_ = TextTextureManager::GetInstance()->LoadTextTexture(tutorialTextParam);
 	tutorialTextSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("tutorial"), Sprite::Order::Back1);
 	tutorialTextSprite_->SetTexture(tutorialTextTexture_);
-	tutorialTextSprite_->SetPosition({ 640,360 });
-	tutorialTextSprite_->SetAnchorPoint({ 0.5f,0.5f });
+	tutorialTextSprite_->SetPosition({ 30,360 });
 
 	//移動音生成
 	moveSE_ = std::make_unique<Audio>();

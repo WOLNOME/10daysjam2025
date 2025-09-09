@@ -5,7 +5,7 @@ void TutorialScene::Initialize() {
 	BaseScene::Initialize();
 	input_ = Input::GetInstance();
 	//カメラの生成と初期化
-	camera_ = std::make_unique<GameCamera>();
+	camera_ = std::make_unique<DevelopCamera>();
 	camera_->Initialize();
 	camera_->SetFarClip(500.0f);
 	//カメラのセット
@@ -14,6 +14,11 @@ void TutorialScene::Initialize() {
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
 	//シーンライトのセット
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
+
+	map_ = std::make_unique<Map>();
+	map_->Initialize("Monkey_Tutorial");
+	player_ = std::make_unique<Player>();
+	player_->Initialize(*map_);
 
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
@@ -42,6 +47,9 @@ void TutorialScene::Update() {
 
 	//カメラ更新
 	camera_->Update();
+
+	//プレイヤー更新
+	player_->Update(*map_);
 }
 
 void TutorialScene::DebugWithImGui() {
