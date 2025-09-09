@@ -50,9 +50,11 @@ void TitleSystem::Initialize() {
 void TitleSystem::Update() {
 	//スペースキーorBボタンで次のシーンへ
 	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
-		SceneManager::GetInstance()->SetNextScene("MENU");
-		isSceneChanging_ = true;
-		decideSE_->Play();
+		if (SceneManager::GetInstance()->SetNextScene("MENU")) {
+			isSceneChanging_ = true;
+			//決定音再生
+			decideSE_->Play();
+		}
 	}
 }
 

@@ -44,7 +44,7 @@ private:
 	void ChangeScene();
 public:
 	//次シーンのセット
-	void SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType = SceneTransitionAnimation::TransitionType::FADE, uint32_t frame = 30);
+	bool SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType = SceneTransitionAnimation::TransitionType::FADE, uint32_t frame = 30);
 
 private:
 	//今のシーン
@@ -59,5 +59,9 @@ private:
 	//アプリケーションの終了フラグ
 	bool isOver_ = false;
 
+	//メニューBGM
+	std::unique_ptr<Audio> menuBGM_ = nullptr;
+	//ゲームプレイBGM
+	std::unique_ptr<Audio> gamePlayBGM_ = nullptr;
 };
 

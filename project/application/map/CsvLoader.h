@@ -15,7 +15,7 @@ struct CsvMapData {
 	// マップの大きさ
 	int width = 0;
 	int height = 0;
-	// スポーン場所 (マップチップ座標)
+	// スポーン場所 (マップチップ座標) (Redo,Undoでプレイヤーの座標として流用)
 	Vector2 spawnDog = { -1,-1 };
 	Vector2 spawnMonkey = { -1,-1 };
 	// ゴール場所 (マップチップ座標)

@@ -19,6 +19,12 @@ void SceneManager::Initialize() {
 	sceneTransitionAnimation_ = std::make_unique<SceneTransitionAnimation>();
 	sceneTransitionAnimation_->Initialize();
 
+	//BGM生成
+	menuBGM_ = std::make_unique<Audio>();
+	menuBGM_->Initialize("menuBGM.wav");
+	gamePlayBGM_ = std::make_unique<Audio>();
+	gamePlayBGM_->Initialize("gamePlayBGM.wav");
+
 }
 
 void SceneManager::Update() {
@@ -95,20 +101,40 @@ void SceneManager::ChangeScene() {
 	}
 }
 
-void SceneManager::SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType, uint32_t frame) {
+bool SceneManager::SetNextScene(const std::string& nextSceneName, SceneTransitionAnimation::TransitionType transitionType, uint32_t frame) {
 	//遷移中なら何もしない
-	if (sceneTransitionAnimation_->IsTransitioning()) return;
+	if (sceneTransitionAnimation_->IsTransitioning()) return false;
 
 	//警告
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
+
+	//BGM再生
+	if (nextSceneName == "MENU" || nextSceneName == "STAGESELECT" || nextSceneName == "TITLE") {
+		//最初のシーン生成時
+		if (!menuBGM_->IsPlaying() && !gamePlayBGM_->IsPlaying()) {
+			menuBGM_->Play(true, 0.5f);
+		}
+		//ゲームシーン→メニューシーン時の処理
+		else if (!menuBGM_->IsPlaying() && gamePlayBGM_->IsPlaying()) {
+			gamePlayBGM_->Stop();
+			menuBGM_->Play(true, 0.5f);
+		}
+	}
+	else {
+		//メニューシーン→ゲームシーン時の処理
+		if (!gamePlayBGM_->IsPlaying() && menuBGM_->IsPlaying()) {
+			menuBGM_->Stop();
+			gamePlayBGM_->Play(true, 0.5f);
+		}
+	}
 
 	//もし最初のシーンだったらここで生成＆初期化
 	if (scene_ == nullptr) {
 		scene_ = sceneFactory_->CreateScene(nextSceneName);
 		nextScene_ = nullptr;
 		scene_->Initialize();
-		return;
+		return true;
 	}
 
 	//次シーンを生成
@@ -117,4 +143,6 @@ void SceneManager::SetNextScene(const std::string& nextSceneName, SceneTransitio
 	sceneTransitionAnimation_->SetTransitionType(transitionType);
 	//遷移アニメーションフレームを設定
 	sceneTransitionAnimation_->SetFrame(frame);
+
+	return true;
 }

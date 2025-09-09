@@ -47,9 +47,16 @@ public:
 	/// <param name="volume">0.0f〜1.0fの範囲で設定</param>
 	void SetVolume(float volume);
 
+	/// <summary>
+	/// 再生中か
+	/// </summary>
+	bool IsPlaying() { return isPlaying_; }
+
 private: // メンバ変数
 	std::string directoryPath_;  // ディレクトリパス
 	uint32_t soundDataHandle_ = 0u;  // サウンドデータハンドル
 	uint32_t voiceDataHandle_ = 0u;  // ボイスデータハンドル
 	float volume_ = 0.5f;
+
+	bool isPlaying_ = false;
 };
