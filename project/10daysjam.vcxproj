@@ -278,6 +278,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\scene\TutorialScene.h" />
     <ClInclude Include="application\system\StageSelectSystem.h" />
     <ClInclude Include="application\system\PoseSystem.h" />
+    <ClInclude Include="application\map\StageCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

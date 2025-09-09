@@ -262,6 +262,7 @@
     <ClInclude Include="application\system\StageSelectSystem.h" />
     <ClInclude Include="application\system\PoseSystem.h" />
     <ClInclude Include="application\map\MapTypes.h" />
+    <ClInclude Include="application\map\StageCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />

@@ -35,6 +35,8 @@ public:
 	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
 	bool IsGoalFor(ActorKind who, int gx, int gy) const;
 
+	// 
+	StageCamera GetStageCameraVal() { return stageCamera_; }
 
 
 private:
@@ -61,5 +63,9 @@ private:
 	std::optional<Vector3> FindStartOnLayer(
 		const std::vector<std::vector<MapChipType>>& layer,
 		MapChipType target, float yOffset) const;
+
+	// ステージカメラ
+	StageCamera stageCamera_;
+	int cameraType_ = 0; 
 };
 

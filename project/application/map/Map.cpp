@@ -82,6 +82,10 @@ void Map::Initialize(const std::string& filepath) {
 
 	}
 
+	cameraType_ = csvMapData_.cameraCode;
+
+	stageCamera_ = GetStageCamera(cameraType_);
+
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const
