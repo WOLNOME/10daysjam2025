@@ -26,6 +26,11 @@ public:
 	/// </summary>
 	void Move(Map& map);
 
+	/// <summary>
+	/// リドゥ・アンドゥ処理
+	/// </summary>
+	void RedoUndo(Map& map);
+
 private:
 
 

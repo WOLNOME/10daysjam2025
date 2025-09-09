@@ -37,18 +37,20 @@ void StageSelectSystem::Initialize() {
 
 void StageSelectSystem::Update() {
 	//スペースキーorAボタンで次のシーンへ(後々選択できるようにする)
-	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA))&&!isSceneChanging_) {
-		SceneManager::GetInstance()->SetNextScene("GAMEPLAY");
-		isSceneChanging_ = true;
-		//決定音再生
-		decideSE_->Play();
+	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
+		if (SceneManager::GetInstance()->SetNextScene("GAMEPLAY")) {
+			isSceneChanging_ = true;
+			//決定音再生
+			decideSE_->Play();
+		}
 	}
 	//エスケープキーorBボタンで前のシーンへ
-	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB))&&!isSceneChanging_) {
-		SceneManager::GetInstance()->SetNextScene("MENU");
-		isSceneChanging_ = true;
-		//決定音再生
-		decideSE_->Play();
+	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {
+		if (SceneManager::GetInstance()->SetNextScene("MENU")) {
+			isSceneChanging_ = true;
+			//決定音再生
+			decideSE_->Play();
+		}
 	}
 
 }

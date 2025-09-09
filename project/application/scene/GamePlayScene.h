@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseScene.h"
+#include "Audio.h"
 #include "GameCamera.h"
 #include "engine/3d/DevelopCamera.h"
 

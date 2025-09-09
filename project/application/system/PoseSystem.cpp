@@ -152,18 +152,24 @@ void PoseSystem::Update() {
 			switch (selectState_) {
 			case SelectState::Restart:
 				isRestart = true;
+				//決定音再生
+				decideSE_->Play();
 				break;
 			case SelectState::BackToStageSelect:
-				SceneManager::GetInstance()->SetNextScene("STAGESELECT");
-				isSceneChanging_ = true;
+				if (SceneManager::GetInstance()->SetNextScene("STAGESELECT")) {
+					isSceneChanging_ = true;
+					//決定音再生
+					decideSE_->Play();
+				}
 				break;
 			case SelectState::BackToMenu:
-				SceneManager::GetInstance()->SetNextScene("MENU");
-				isSceneChanging_ = true;
+				if (SceneManager::GetInstance()->SetNextScene("MENU")) {
+					isSceneChanging_ = true;
+					//決定音再生
+					decideSE_->Play();
+				}
 				break;
 			}
-			//決定音再生
-			decideSE_->Play();
 		}
 		//エスケープキーorBボタンもポーズを閉じられる
 		if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {

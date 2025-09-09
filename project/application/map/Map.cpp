@@ -1,24 +1,5 @@
 #include "Map.h"
 
-namespace {
-	inline bool IsRenderable(MapChipType t) {
-		switch (t) {
-		case MapChipType::FloorDog:		// 犬のフロア : 3
-		case MapChipType::FloorMonkey:	// 猿のフロア : 4
-		case MapChipType::BlockMonkey:	// 猿のフロア（犬が押せる） : 5
-		case MapChipType::GoalDog:		// 犬のゴール : 6
-		case MapChipType::GoalMonkey:	// 猿のゴール : 7
-		case MapChipType::SwitchOff:	// スイッチ（Off状態） : 8
-		case MapChipType::SwitchOn:		// スイッチ（On状態） : 9
-		case MapChipType::BootBlockOff: // ブーツブロック（Off状態） : 10
-		case MapChipType::BootBlockOn:	// ブーツブロック（On状態） : 11
-			return true;            // モデルがあるタイルだけ描画
-		default:
-			return false;
-		}
-	}
-}
-
 void Map::Initialize(const std::string& filepath) {
 	CsvLoader loader;
 	loader.Initialize();
@@ -26,6 +7,10 @@ void Map::Initialize(const std::string& filepath) {
 
 	blocksL1_.clear();
 	blocksL2_.clear();
+
+	//RedoUndoシステムの初期化
+	redoUndoSystem_ = std::make_unique<RedoUndoSystem>();
+	redoUndoSystem_->Initialize(csvMapData_);
 
 	// 初期化の前にテーブルをリサイズしておく（Initialize の冒頭あたり）
 	l2BlockAt_.assign(
@@ -110,9 +95,7 @@ void Map::Initialize(const std::string& filepath) {
 			}
 			blocksL2_.push_back(std::move(blk));
 		}
-
 	}
-
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const
@@ -259,6 +242,16 @@ bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos&
 	Vector3 newPos = GridToWorld(tx, ty, tileSize_);
 	block->SetWorldPosition(newPos);
 
+	//押した後の状態をRedoUndoシステムに保存
+	CsvMapData newState = redoUndoSystem_->reflectionMapState();
+	//箱の旧位置に空のオブジェクトをセット&犬の位置をそこに
+	newState.layer2[ny][nx] = MapChipType::Empty;
+	newState.spawnDog = { (float)nx,(float)ny };
+	//箱の新位置に箱をセット
+	newState.layer2[ty][tx] = MapChipType::BlockMonkey;
+	redoUndoSystem_->AddNewHistory(newState);
+
+
 	return true;
 
 }
@@ -397,6 +390,22 @@ void Map::SetBootBlockAt(int gx, int gy, bool toOn)
 	}
 }
 
+bool Map::IsRenderable(MapChipType t) {
+	switch (t) {
+	case MapChipType::FloorDog:		// 犬のフロア : 3
+	case MapChipType::FloorMonkey:	// 猿のフロア : 4
+	case MapChipType::BlockMonkey:	// 猿のフロア（犬が押せる） : 5
+	case MapChipType::GoalDog:		// 犬のゴール : 6
+	case MapChipType::GoalMonkey:	// 猿のゴール : 7
+	case MapChipType::SwitchOff:	// スイッチ（Off状態） : 8
+	case MapChipType::SwitchOn:		// スイッチ（On状態） : 9
+	case MapChipType::BootBlockOff: // ブーツブロック（Off状態） : 10
+	case MapChipType::BootBlockOn:	// ブーツブロック（On状態） : 11
+		return true;            // モデルがあるタイルだけ描画
+	default:
+		return false;
+	}
+}
 
 Vector3 Map::GridToWorld(int gx, int gy, float yOffset) const
 {
