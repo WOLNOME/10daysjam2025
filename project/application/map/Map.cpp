@@ -292,35 +292,50 @@ bool Map::IsGoalFor(ActorKind who, int gx, int gy) const
 	}
 }
 
-void Map::OnPlayerStepped(ActorKind who, int gx, int gy)
+void Map::OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos, const GridPos& monkeyPos)
 {
 	if (gx < 0 || gy < 0 || gx >= csvMapData_.width || gy >= csvMapData_.height) return;
 
-	// 触れたプレイヤーが見るレイヤとスイッチ参照テーブルを選ぶ
-	auto& layer = (who == ActorKind::Dog) ? csvMapData_.layer1 : csvMapData_.layer2;
-	auto& switchAt = (who == ActorKind::Dog) ? l1SwitchAt_ : l2SwitchAt_;
-	MapChipType& t = layer[gy][gx];
+	auto inBounds = [&](const GridPos& p) {
+		return (p.x >= 0 && p.y >= 0 && p.x < csvMapData_.width && p.y < csvMapData_.height);
+		};
 
-	// SwitchOff → SwitchOn（見た目も変更）＋ BootBlock をすべて On へ
-	if (t == MapChipType::SwitchOff) {
-		t = MapChipType::SwitchOn;
-		if (Block* b = switchAt[gy][gx]) {
-			b->ReplaceVisual(MapChipType::SwitchOn);
+	// 1) 誰かが BootBlock(Off/On) の上にいれば、切替は一切しない
+	bool someoneOnBoot = false;
+	if (inBounds(dogPos)) {
+		const MapChipType td = csvMapData_.layer1[dogPos.y][dogPos.x];
+		if (td == MapChipType::BootBlockOff || td == MapChipType::BootBlockOn) someoneOnBoot = true;
+	}
+	if (inBounds(monkeyPos)) {
+		const MapChipType tm = csvMapData_.layer2[monkeyPos.y][monkeyPos.x];
+		if (tm == MapChipType::BootBlockOff || tm == MapChipType::BootBlockOn) someoneOnBoot = true;
+	}
+	if (someoneOnBoot) return;
+
+	// 2) 犬が踏んでも何もしない（切替はサルのみ）
+	if (who == ActorKind::Dog) return;
+
+	// 3) サルが Switch を踏んだ場合のみトグル（全ブーツ連動）
+	MapChipType& t2 = csvMapData_.layer2[gy][gx];
+
+	if (t2 == MapChipType::SwitchOff) {
+		t2 = MapChipType::SwitchOn;
+		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
+			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOn); }
 		}
-		SetAllBootBlocks(true);
+		SetAllBootBlocks(true);   // 全部 On（上げる）
 		return;
 	}
-	// SwitchOn → SwitchOff（見た目も変更）＋ BootBlock をすべて Off へ
-	if (t == MapChipType::SwitchOn) {
-		t = MapChipType::SwitchOff;
-		if (Block* b = switchAt[gy][gx]) {
-			b->ReplaceVisual(MapChipType::SwitchOff);
+	if (t2 == MapChipType::SwitchOn) {
+		t2 = MapChipType::SwitchOff;
+		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
+			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOff); }
 		}
-		SetAllBootBlocks(false);
+		SetAllBootBlocks(false);  // 全部 Off（下げる）
 		return;
 	}
 
-	// ※ブーツブロックの上に乗った時の個別トグルは無効化（今回仕様）
+	// ※ 今回仕様：ブーツ上に乗っての個別トグルは行わない
 }
 
 void Map::SetAllBootBlocks(bool toOn)

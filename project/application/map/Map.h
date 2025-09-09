@@ -42,7 +42,7 @@ public:
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
 	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
-	void OnPlayerStepped(ActorKind who, int gx, int gy);
+	void OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos, const GridPos& monkeyPos);
 
 	void SetAllBootBlocks(bool toOn);
 	void SetBootBlockAt(int gx, int gy, bool toOn);
