@@ -337,6 +337,7 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
 			auto& t = csvMapData_.layer1[y][x];
+			//オフにする
 			if (t == MapChipType::BootBlockOff && !toOn) {
 				t = MapChipType::BootBlockOn;
 				if (Block* b = l1BootAt_[y][x]) {
@@ -344,9 +345,11 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_)); // On は猿側の高さ
 
 					//RedoUndo用に状態を保存
-					newState.layer1[y][x] = MapChipType::Empty;
+					newState.layer1[y][x] = MapChipType::BootBlockOff;
+					newState.layer2[y][x] = MapChipType::Empty;
 				}
 			}
+			//オンにする
 			else if (t == MapChipType::BootBlockOn && toOn) {
 				t = MapChipType::BootBlockOff;
 				if (Block* b = l1BootAt_[y][x]) {
@@ -354,7 +357,8 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));      // Off は犬側の高さ
 
 					//RedoUndo用に状態を保存
-					newState.layer1[y][x] = MapChipType::BootBlockOff;
+					newState.layer1[y][x] = MapChipType::Empty;
+					newState.layer2[y][x] = MapChipType::BootBlockOn;
 				}
 			}
 		}
@@ -363,36 +367,23 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
 			auto& t = csvMapData_.layer2[y][x];
+			//オンにする
 			if (t == MapChipType::BootBlockOff && toOn) {
 				t = MapChipType::BootBlockOn;
 				if (Block* b = l2BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOn);
 					b->SetWorldPosition(GridToWorld(x, y, tileSize_));
 
-					//RedoUndo用に状態を保存
-					newState.layer2[y][x] = MapChipType::BootBlockOn;
 				}
 			}
+			//オフにする
 			else if (t == MapChipType::BootBlockOn && !toOn) {
 				t = MapChipType::BootBlockOff;
 				if (Block* b = l2BootAt_[y][x]) {
 					b->ReplaceVisual(MapChipType::BootBlockOff);
 					b->SetWorldPosition(GridToWorld(x, y, 0.0f));
 
-					//RedoUndo用に状態を保存
-					newState.layer2[y][x] = MapChipType::Empty;
 				}
-			}
-			//スイッチオフ
-			else if (t == MapChipType::SwitchOn && !toOn) {
-				//RedoUndo用に状態を保存
-				newState.layer2[y][x] = MapChipType::SwitchOff;
-
-			}
-			//スイッチオン
-			else if (t == MapChipType::SwitchOff && toOn) {
-				//RedoUndo用に状態を保存
-				newState.layer2[y][x] = MapChipType::SwitchOn;
 			}
 		}
 	}
