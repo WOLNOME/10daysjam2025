@@ -5,7 +5,7 @@
 #include <sstream>
 #include "MapChipType.h"
 #include "Vector2.h"
-
+#include "StageCamera.h"
 
 struct CsvMapData {
 	// 一層（犬のフロア）のマップデータ
@@ -22,6 +22,9 @@ struct CsvMapData {
 	Vector2 goalDog{ -1, -1 };
 	Vector2 goalMonkey{ -1, -1 };
 	// -1は未設定の場合画面外に行くように
+
+	// ステージカメラ / カメラタイプのデフォルトをA(8x6)にしておく
+	int cameraCode = 0;  // 既定A=0
 };
 class CsvLoader
 {
@@ -34,9 +37,15 @@ public:
 	// CSVファイル読み込み
 	CsvMapData Loader(const std::string& filepath);
 
+	// getter
+	StageCamera GetStageCamera() const { return stageCamera_; }
+
 private:
 	// マップの基本情報
 	CsvMapData csvMapData_;
+
+	// ステージカメラ
+	StageCamera stageCamera_;
 
 
 };
