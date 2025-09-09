@@ -42,7 +42,7 @@ public:
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
 	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
-	void OnPlayerStepped(ActorKind who, int gx, int gy);
+	void OnPlayerStepped(ActorKind who, int gx, int gy , const GridPos& dogPos, const GridPos& monkeyPos);
 
 	void SetAllBootBlocks(bool toOn);
 	void SetBootBlockAt(int gx, int gy, bool toOn);
@@ -68,6 +68,10 @@ private:
 	// BootBlock のブロック参照テーブル（描画オブジェクトのYを切替用）
 	std::vector<std::vector<Block*>> l1BootAt_;
 	std::vector<std::vector<Block*>> l2BootAt_;
+
+	// スイッチ(Off/On)のブロック参照テーブル
+	std::vector<std::vector<Block*>> l1SwitchAt_;
+	std::vector<std::vector<Block*>> l2SwitchAt_;
 
 	bool blockScaleCaptured_ = false;
 ;
