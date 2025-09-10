@@ -4,6 +4,7 @@
 #include "MyMath.h"
 #include <algorithm>
 #include <cmath>
+#include <SceneManager.h>
 
 void Player::Initialize(const Map& map) {
 	// イヌ初期化
@@ -25,6 +26,9 @@ void Player::Initialize(const Map& map) {
 	// ワールドへスナップ
 	SnapToWorld(Active::Dog, map);
 	SnapToWorld(Active::Monkey, map);
+
+	clearTimerSec_ = 0.0f;
+	clearQueued_ = false;
 }
 
 
@@ -57,6 +61,24 @@ void Player::Update(Map& map)
 
 	// 静止時にも常にボビングを反映
 	ApplyGoalBobbing(map, kDeltaTime);
+
+	// 二匹がゴールしたら5秒後にセレクトシーンへ
+	const bool dogOnGoal = map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y);
+	const bool monkeyOnGoal = map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y);
+
+	if (dogOnGoal && monkeyOnGoal) {
+		clearTimerSec_ += kDeltaTime;   // MyMathのΔtを使用中ならそのままでOK
+		if (!clearQueued_ && clearTimerSec_ >= clearWaitSec_) {
+			// ★ ステージセレクトへ戻る（シーン名はあなたの管理名に合わせて）
+			if (SceneManager::GetInstance()->SetNextScene("STAGESELECT")) {
+				clearQueued_ = true;    // 多重遷移ガード
+			}
+		}
+	}
+	else {
+		// どちらかが外れたらリセット
+		clearTimerSec_ = 0.0f;
+	}
 
     dog_->Update();
     monkey_->Update();
