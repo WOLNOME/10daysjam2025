@@ -29,6 +29,10 @@ void Player::Initialize(const Map& map) {
 
 	clearTimerSec_ = 0.0f;
 	clearQueued_ = false;
+
+	//パーティクルの生成・初期化
+	particle_ = std::make_unique<Particle>();
+	/*particle_->Initialize(ParticleManager::GetInstance()->GenerateName("Particle"), "clear");*/
 }
 
 
@@ -66,7 +70,9 @@ void Player::Update(Map& map) {
 	const bool monkeyOnGoal = map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y);
 
 	if (dogOnGoal && monkeyOnGoal) {
-		clearTimerSec_ += kDeltaTime;   // MyMathのΔtを使用中ならそのままでOK
+		particle_->Initialize(ParticleManager::GetInstance()->GenerateName("Particle"), "clear");
+		particle_->emitter_.transform.translate = { 620.0f,360.0f,0.0f };
+		clearTimerSec_ += kDeltaTime;
 		if (!clearQueued_ && clearTimerSec_ >= clearWaitSec_) {
 			// ★ ステージセレクトへ戻る（シーン名はあなたの管理名に合わせて）
 			if (SceneManager::GetInstance()->SetNextScene("STAGESELECT")) {

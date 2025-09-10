@@ -3,6 +3,7 @@
 #include "application/character/Dog.h"
 #include "application/character/Monkey.h"
 #include "application/map/MapTypes.h"
+#include <Particle.h>
 
 // 前方宣言
 class Map;
@@ -30,9 +31,6 @@ public:
 	/// リドゥ・アンドゥ処理
 	/// </summary>
 	void RedoUndo(Map& map);
-
-private:
-
 
 
 private:
@@ -93,5 +91,8 @@ private:
 	float clearWaitSec_ = 5.0f;  // 待機秒数
 	float clearTimerSec_ = 0.0f;  // 経過時間
 	bool  clearQueued_ = false; // 多重遷移防止フラグ
+
+	//パーティクル
+	std::unique_ptr<Particle> particle_ = nullptr;
 };
 
