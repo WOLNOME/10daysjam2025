@@ -38,6 +38,7 @@ private://メンバ変数
 	const float jumpTime_ = 0.3f;
 	float jumpTimer_ = 0.0f;
 	bool isJumping_ = false;
+	bool isDisplayOldTitle_ = false;
 
 	//タイトル文字
 	std::unique_ptr<Sprite> titleTextSprite_ = nullptr;

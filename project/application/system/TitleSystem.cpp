@@ -16,6 +16,7 @@ void TitleSystem::Initialize() {
 	backSprite_->SetPosition({ 0,0 });
 	backSprite_->SetSize({ 1280.0f,720.0f });
 	backSprite_->SetAnchorPoint({ 0,0 });
+	backSprite_->SetIsDisplay(false);
 	//犬画像スプライト生成
 	dogSprite_ = std::make_unique<Sprite>();
 	dogTexture_ = TextureManager::GetInstance()->LoadTexture("dog_real.png");
@@ -23,6 +24,7 @@ void TitleSystem::Initialize() {
 	dogSprite_->SetSize({ 380.0f,380.0f });
 	dogSprite_->SetPosition({ 200,530 });
 	dogSprite_->SetAnchorPoint({ 0.5f,0.5f });
+	dogSprite_->SetIsDisplay(false);
 	//サル画像スプライト生成
 	monkeySprite_ = std::make_unique<Sprite>();
 	monkeyTexture_ = TextureManager::GetInstance()->LoadTexture("monkey_real.png");
@@ -30,6 +32,7 @@ void TitleSystem::Initialize() {
 	monkeySprite_->SetSize({ 380.0f,380.0f });
 	monkeySprite_->SetPosition({ 1000,520 });
 	monkeySprite_->SetAnchorPoint({ 0.5f,0.5f });
+	monkeySprite_->SetIsDisplay(false);
 
 	//タイトル文字スプライト生成
 	titleTextSprite_ = std::make_unique<Sprite>();
@@ -106,6 +109,13 @@ void TitleSystem::Update() {
 			//決定音再生
 			decideSE_->Play();
 		}
+	}
+	//隠しコマンド
+	if(input_->PushKey(DIK_S)&&input_->PushKey(DIK_A)&&input_->PushKey(DIK_R)&&input_->PushKey(DIK_U)&&input_->TriggerKey(DIK_LSHIFT)){
+		isDisplayOldTitle_ = !isDisplayOldTitle_;
+		backSprite_->SetIsDisplay(isDisplayOldTitle_);
+		dogSprite_->SetIsDisplay(isDisplayOldTitle_);
+		monkeySprite_->SetIsDisplay(isDisplayOldTitle_);
 	}
 
 	backPlane_->Update();
