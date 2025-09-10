@@ -88,7 +88,7 @@ private:
 	// モデルの“前”が +Z でない場合の補正（例: +X が前なら -90° = -HalfPI）
 	float modelYawOffset_ = 0.0f;  // 必要に応じて調整
 
-	float clearWaitSec_ = 5.0f;  // 待機秒数
+	float clearWaitSec_ = 2.0f;  // 待機秒数
 	float clearTimerSec_ = 0.0f;  // 経過時間
 	bool  clearQueued_ = false; // 多重遷移防止フラグ
 
