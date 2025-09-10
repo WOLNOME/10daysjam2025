@@ -39,6 +39,9 @@ public:
 	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
 	bool IsGoalFor(ActorKind who, int gx, int gy) const;
 
+
+	StageCamera GetStageCameraVal() { return stageCamera_; }
+
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
 	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
@@ -84,5 +87,9 @@ private:
 	std::optional<Vector3> FindStartOnLayer(
 		const std::vector<std::vector<MapChipType>>& layer,
 		MapChipType target, float yOffset) const;
+
+	// ステージカメラ
+	StageCamera stageCamera_;
+	int cameraType_ = 0; 
 };
 

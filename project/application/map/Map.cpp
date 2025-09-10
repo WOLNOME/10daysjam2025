@@ -84,6 +84,11 @@ void Map::Initialize(const std::string& filepath) {
 	}
 	//blockScaleCaptured_をfalseに戻す
 	blockScaleCaptured_ = false;
+
+	// カメラの位置を番号で管理
+	cameraType_ = csvMapData_.cameraCode;
+	// 管理番号に応じたカメラの位置情報をセット
+	stageCamera_ = GetStageCamera(cameraType_);
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const {
