@@ -118,6 +118,11 @@ void StageSelectSystem::LoadStageTextures()
 	stageTextures_.resize(kStageCount_);
 	baseSizes_.resize(kStageCount_);
 
+	// プレビュー側の配列も確保
+	stagePreviewSprites_.resize(kStageCount_);
+	stagePreviewTextures_.resize(kStageCount_);
+	stagePreviewBaseSizes_.resize(kStageCount_);
+
 	for (int i = 0; i < kStageCount_; ++i) {
 		char path[64];
 		std::snprintf(path, sizeof(path), "number/%d.png", i + 1);
@@ -135,29 +140,53 @@ void StageSelectSystem::LoadStageTextures()
 
 		// 生成直後のサイズを取得して保存（以降は倍率×でSetSize）
 		baseSizes_[i] = spr->GetSize();
-
 		stageSprites_[i] = std::move(spr);
+
+
+		// --- ステージ画像 ---
+		char stgPath[64];
+		std::snprintf(stgPath, sizeof(stgPath), "stage/Stag_%d.png", i + 1);
+
+		uint32_t stgTex = TextureManager::GetInstance()->LoadTexture(stgPath);
+		stagePreviewTextures_[i] = stgTex;
+
+		auto stgSpr = std::make_unique<Sprite>();
+		stgSpr->Initialize(
+			SpriteManager::GetInstance()->GenerateName(("stage_img_" + std::to_string(i + 1)).c_str()),
+			Sprite::Order::Front1, stgTex);                 // ← 数字より前面
+		stgSpr->SetAnchorPoint({ 0.5f, 0.5f });
+		stagePreviewBaseSizes_[i] = stgSpr->GetSize();      // 基準サイズを保持
+		stagePreviewSprites_[i] = std::move(stgSpr);
 	}
 }
 
 void StageSelectSystem::LayoutStageSprites()
 {
 	const float centerX = 640.0f;
+
 	for (int i = 0; i < kStageCount_; ++i) {
-		float x = centerX + (static_cast<float>(i) - viewIndex_) * spacing_;
-		stageSprites_[i]->SetPosition({ x, yPos_ });
+		const float x = centerX + (static_cast<float>(i) - viewIndex_) * spacing_;
 
-		const float mul = (i == selectedIndex_) ? (scale_ * focusMul_) : scale_;
+		// ====== 番号 ======
+		{
+			stageSprites_[i]->SetPosition({ x, yPos_ });
+			const float mulNum = (i == selectedIndex_) ? (scale_ * focusMul_) : scale_;
+			const Vector2 base = baseSizes_[i]; // Getしてから倍率×
+			stageSprites_[i]->SetSize({ base.x * mulNum, base.y * mulNum });
 
-		const Vector2 base = baseSizes_[i];
-		stageSprites_[i]->SetSize({ base.x * mul, base.y * mul });
-
-		// 見栄えの色だけ調整
-		if (i == selectedIndex_) {
-			stageSprites_[i]->SetColor({ 1,1,1,1 });
+			if (i == selectedIndex_) stageSprites_[i]->SetColor({ 1,1,1,1 });
+			else                      stageSprites_[i]->SetColor({ 0.8f,0.8f,0.8f,0.9f });
 		}
-		else {
-			stageSprites_[i]->SetColor({ 0.8f,0.8f,0.8f,0.9f });
+
+		// ====== ステージ画像（番号の上に表示） ======
+		{
+			stagePreviewSprites_[i]->SetPosition({ x, yPos_ - previewYOffset_ });
+			const float mulImg = (i == selectedIndex_) ? (previewScale_ * previewFocusMul_) : previewScale_;
+			const Vector2 base = stagePreviewBaseSizes_[i]; // Getしてから倍率×
+			stagePreviewSprites_[i]->SetSize({ base.x * mulImg, base.y * mulImg });
+
+			if (i == selectedIndex_) stagePreviewSprites_[i]->SetColor({ 1,1,1,1 });
+			else                      stagePreviewSprites_[i]->SetColor({ 0.9f,0.9f,0.9f,0.95f });
 		}
 	}
 }
