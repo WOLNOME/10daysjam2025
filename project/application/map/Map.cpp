@@ -65,6 +65,10 @@ void Map::Initialize(const std::string& filepath) {
 				//参照テーブルに登録
 				l2SwitchAt_[y][x] = blk2.get();
 			}
+			//BlockMonkey発見時
+			if (t2 == MapChipType::BlockMonkey) {
+				l2BlockAt_[y][x] = blk2.get();
+			}
 
 			// 最初に見つけた“床”で一度だけ取得（以後は固定）
 			if (!blockScaleCaptured_ &&
