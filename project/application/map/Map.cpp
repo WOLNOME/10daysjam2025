@@ -112,6 +112,11 @@ void Map::Initialize(const std::string& filepath) {
 			blocksL2_.push_back(std::move(blk));
 		}
 	}
+	// カメラの位置を番号で管理
+	cameraType_ = csvMapData_.cameraCode;
+	// 管理番号に応じたカメラの位置情報をセット
+	stageCamera_ = GetStageCamera(cameraType_);
+
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const
