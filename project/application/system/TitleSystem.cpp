@@ -37,7 +37,7 @@ void TitleSystem::Initialize() {
 	//タイトル文字スプライト生成
 	titleTextSprite_ = std::make_unique<Sprite>();
 	TextParam titleTextParam;
-	titleTextParam.text = L"すれ違い協定\n~和解の出口~";
+	titleTextParam.text = L"すれ違い協定";
 	titleTextParam.font = Font::UDDegitalN_B;
 	titleTextParam.fontStyle = FontStyle::Normal;
 	titleTextParam.size = 96.0f;
@@ -50,7 +50,7 @@ void TitleSystem::Initialize() {
 	//次へ進むUIスプライト生成
 	nextUITextSprite_ = std::make_unique<Sprite>();
 	TextParam nextUITextParam;
-	nextUITextParam.text = L"[SPACE]または(A)を押してください";
+	nextUITextParam.text = L"[SPACE]を押してください";
 	nextUITextParam.font = Font::UDDegitalN_R;
 	nextUITextParam.fontStyle = FontStyle::Normal;
 	nextUITextParam.size = 32.0f;
