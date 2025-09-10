@@ -153,6 +153,10 @@ void Player::RedoUndo(Map& map) {
 					//参照テーブルに登録
 					map.l2SwitchAt_[y][x] = blk2.get();
 				}
+				//BlockMonkey発見時
+				if (t2 == MapChipType::BlockMonkey) {
+					map.l2BlockAt_[y][x] = blk2.get();
+				}
 
 				// 最初に見つけた“床”で一度だけ取得（以後は固定）
 				if (!map.blockScaleCaptured_ &&
