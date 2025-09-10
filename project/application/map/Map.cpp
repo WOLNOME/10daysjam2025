@@ -24,10 +24,7 @@ void Map::Initialize(const std::string& filepath) {
 	l2BootAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
 
 	// スイッチ参照
-	l1SwitchAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
 	l2SwitchAt_.assign(csvMapData_.height, std::vector<Block*>(csvMapData_.width, nullptr));
-
-
 
 	auto tileToWorld = [&](int x, int y, float yOffset = 0.0f) {
 
@@ -39,79 +36,54 @@ void Map::Initialize(const std::string& filepath) {
 		};
 		};
 
-	// --- Layer1（犬のフロア） ---
+	//各レイヤーの初期化
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
-			MapChipType t = csvMapData_.layer1[y][x];
-			if (!IsRenderable(t)) continue;
-
-			auto pos = tileToWorld(x, y, 0.0f);
-			auto blk = std::make_unique<Block>();
-			blk->Initialize(t, pos);
-			if (t == MapChipType::BootBlockOff || t == MapChipType::BootBlockOn) {
-				l1BootAt_[y][x] = blk.get();
-				// 表示高さ：Off→犬側 / On→猿側
-				const float yOff = (t == MapChipType::BootBlockOff) ? 0.0f : tileSize_;
-				blk->SetWorldPosition(GridToWorld(x, y, yOff));
+			MapChipType t1 = csvMapData_.layer1[y][x];
+			MapChipType t2 = csvMapData_.layer2[y][x];
+			auto pos1 = tileToWorld(x, y, 0.0f);
+			auto pos2 = tileToWorld(x, y, tileSize_);
+			auto blk1 = std::make_unique<Block>();
+			auto blk2 = std::make_unique<Block>();
+			auto blkUp = std::make_unique<Block>();
+			blk1->Initialize(t1, pos1);
+			blk2->Initialize(t2, pos2);
+			blkUp->Initialize(MapChipType::Empty, pos2);
+			
+			//ブーツブロック発見時
+			bool isBootBlock = false;
+			if (t1 == MapChipType::BootBlockOff) {
+				// 参照テーブルに登録
+				l1BootAt_[y][x] = blk1.get();
+				// レイヤー2の場所のBlockを生成しておく
+				l2BootAt_[y][x] = blkUp.get();
+				// ブーツブロックがある
+				isBootBlock = true;
+			}
+			//スイッチ発見時
+			if(t2== MapChipType::SwitchOff){
+				//参照テーブルに登録
+				l2SwitchAt_[y][x] = blk2.get();
 			}
 
-			// スイッチ参照
-			if (t == MapChipType::SwitchOff || t == MapChipType::SwitchOn) {
-				l1SwitchAt_[y][x] = blk.get();
-			}
-
-			//blockScaleY_ = blk->GetScaleY();
 			// 最初に見つけた“床”で一度だけ取得（以後は固定）
 			if (!blockScaleCaptured_ &&
-				(t == MapChipType::FloorDog || t == MapChipType::FloorMonkey)) {
-				blockScaleY_ = blk->GetScaleY();
+				(t1 == MapChipType::FloorDog)) {
+				blockScaleY_ = blk1->GetScaleY();
 				blockScaleCaptured_ = true;
-
 			}
-			blocksL1_.push_back(std::move(blk));
+			blocksL1_.push_back(std::move(blk1));
+			if (!isBootBlock) {
+				blocksL2_.push_back(std::move(blk2));
+			}
+			else {
+				blocksL2_.push_back(std::move(blkUp));
+			}
+
 		}
 	}
-	// --- Layer2（猿のフロア） ---
-	for (int y = 0; y < csvMapData_.height; ++y) {
-		for (int x = 0; x < csvMapData_.width; ++x) {
-			MapChipType t = MapChipType::Empty;
-			if (y < (int)csvMapData_.layer2.size() && x < (int)csvMapData_.layer2[y].size()) {
-				t = csvMapData_.layer2[y][x];
-			}
-			if (!IsRenderable(t)) continue;
-
-			// ←ここを「1段ぶんの高さ」に
-			auto pos = tileToWorld(x, y, tileSize_);
-
-			auto blk = std::make_unique<Block>();
-			blk->Initialize(t, pos);
-			if (t == MapChipType::BootBlockOff || t == MapChipType::BootBlockOn) {
-				l2BootAt_[y][x] = blk.get();
-				// 表示高さ：Off→犬側 / On→猿側（レイヤに関わらず状態で高さを決める）
-				const float yOff = (t == MapChipType::BootBlockOff) ? 0.0f : tileSize_;
-				blk->SetWorldPosition(GridToWorld(x, y, yOff));
-			}
-			// BlockMonkey ならテーブル登録
-			if (t == MapChipType::BlockMonkey) {
-				l2BlockAt_[y][x] = blk.get();
-			}
-
-			// スイッチ参照
-			if (t == MapChipType::SwitchOff || t == MapChipType::SwitchOn) {
-				l2SwitchAt_[y][x] = blk.get();
-			}
-
-			//blockScaleY_ = blk->GetScaleY();
-			// 最初に見つけた“床”で一度だけ取得（以後は固定）
-			if (!blockScaleCaptured_ &&
-				(t == MapChipType::FloorDog || t == MapChipType::FloorMonkey)) {
-				blockScaleY_ = blk->GetScaleY();
-				blockScaleCaptured_ = true;
-
-			}
-			blocksL2_.push_back(std::move(blk));
-		}
-	}
+	//blockScaleCaptured_をfalseに戻す
+	blockScaleCaptured_ = false;
 }
 
 std::optional<Vector3> Map::GetDogSpawnWorld() const {
@@ -260,9 +232,7 @@ bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos&
 	newState.layer2[ty][tx] = MapChipType::BlockMonkey;
 	redoUndoSystem_->AddNewHistory(newState);
 
-
 	return true;
-
 }
 
 bool Map::HasBlockMonkeyAt(int gx, int gy) const {
@@ -311,7 +281,8 @@ void Map::OnPlayerStepped(ActorKind who, int gx, int gy, const GridPos& dogPos, 
 	if (t2 == MapChipType::SwitchOff) {
 		t2 = MapChipType::SwitchOn;
 		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
-			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOn); }
+			Block* bs2 = l2SwitchAt_[gy][gx];
+			bs2->ReplaceVisual(MapChipType::SwitchOn);
 		}
 		SetAllBootBlocks(true, gx, gy);   // 全部 On（上げる）
 		return;
@@ -319,7 +290,8 @@ void Map::OnPlayerStepped(ActorKind who, int gx, int gy, const GridPos& dogPos, 
 	if (t2 == MapChipType::SwitchOn) {
 		t2 = MapChipType::SwitchOff;
 		if (l2SwitchAt_.size() > (size_t)gy && l2SwitchAt_[gy].size() > (size_t)gx) {
-			if (Block* b = l2SwitchAt_[gy][gx]) { b->ReplaceVisual(MapChipType::SwitchOff); }
+			Block* bs2 = l2SwitchAt_[gy][gx];
+			bs2->ReplaceVisual(MapChipType::SwitchOff);
 		}
 		SetAllBootBlocks(false, gx, gy);  // 全部 Off（下げる）
 		return;
@@ -333,55 +305,76 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 	CsvMapData newState = redoUndoSystem_->reflectionMapState();
 	newState.spawnMonkey = { (float)gx,(float)gy };
 
-	// layer1
 	for (int y = 0; y < csvMapData_.height; ++y) {
 		for (int x = 0; x < csvMapData_.width; ++x) {
-			auto& t = csvMapData_.layer1[y][x];
-			//オフにする
-			if (t == MapChipType::BootBlockOff && !toOn) {
-				t = MapChipType::BootBlockOn;
-				if (Block* b = l1BootAt_[y][x]) {
-					b->ReplaceVisual(MapChipType::BootBlockOn);
-					b->SetWorldPosition(GridToWorld(x, y, tileSize_)); // On は猿側の高さ
-
-					//RedoUndo用に状態を保存
-					newState.layer1[y][x] = MapChipType::BootBlockOff;
-					newState.layer2[y][x] = MapChipType::Empty;
-				}
-			}
+			auto& t1 = csvMapData_.layer1[y][x];
+			auto& t2 = csvMapData_.layer2[y][x];
+			Block* bb1 = l1BootAt_[y][x];
+			Block* bb2 = l2BootAt_[y][x];
+			Block* bs2 = l2SwitchAt_[y][x];
 			//オンにする
-			else if (t == MapChipType::BootBlockOn && toOn) {
-				t = MapChipType::BootBlockOff;
-				if (Block* b = l1BootAt_[y][x]) {
-					b->ReplaceVisual(MapChipType::BootBlockOff);
-					b->SetWorldPosition(GridToWorld(x, y, 0.0f));      // Off は犬側の高さ
+			if (toOn) {
+				//オフブロック->オンブロック
+				if (t1 == MapChipType::BootBlockOff) {
+					//csvMapData_の更新
+					t1 = MapChipType::Empty;
+					t2 = MapChipType::BootBlockOn;
+
+					//参照テーブルも更新
+					bb1->ReplaceVisual(MapChipType::Empty);
+					bb1->SetWorldPosition(GridToWorld(x, y, 0.0f));
+					bb2->ReplaceVisual(MapChipType::BootBlockOn);
+					bb2->SetWorldPosition(GridToWorld(x, y, tileSize_));
 
 					//RedoUndo用に状態を保存
 					newState.layer1[y][x] = MapChipType::Empty;
 					newState.layer2[y][x] = MapChipType::BootBlockOn;
+
 				}
-			}
-		}
-	}
-	// layer2
-	for (int y = 0; y < csvMapData_.height; ++y) {
-		for (int x = 0; x < csvMapData_.width; ++x) {
-			auto& t = csvMapData_.layer2[y][x];
-			//オンにする
-			if (t == MapChipType::BootBlockOff && toOn) {
-				t = MapChipType::BootBlockOn;
-				if (Block* b = l2BootAt_[y][x]) {
-					b->ReplaceVisual(MapChipType::BootBlockOn);
-					b->SetWorldPosition(GridToWorld(x, y, tileSize_));
+				//オフスイッチ->オンスイッチ
+				if (t2 == MapChipType::SwitchOff) {
+					//csvMapData_の更新
+					t2 = MapChipType::SwitchOn;
+
+					//参照テーブルも更新
+					bs2->ReplaceVisual(MapChipType::SwitchOn);
+					bs2->SetWorldPosition(GridToWorld(x, y, tileSize_));
+
+					//RedoUndo用に状態を保存
+					newState.layer2[y][x] = MapChipType::SwitchOn;
 
 				}
 			}
 			//オフにする
-			else if (t == MapChipType::BootBlockOn && !toOn) {
-				t = MapChipType::BootBlockOff;
-				if (Block* b = l2BootAt_[y][x]) {
-					b->ReplaceVisual(MapChipType::BootBlockOff);
-					b->SetWorldPosition(GridToWorld(x, y, 0.0f));
+			else {
+				//オンブロック->オフブロック
+				if (t2 == MapChipType::BootBlockOn) {
+					//csvMapData_の更新
+					t2 = MapChipType::Empty;
+					t1 = MapChipType::BootBlockOff;
+
+					//参照テーブルも更新
+					bb1->ReplaceVisual(MapChipType::BootBlockOff);
+					bb1->SetWorldPosition(GridToWorld(x, y, 0.0f));
+					bb2->ReplaceVisual(MapChipType::Empty);
+					bb2->SetWorldPosition(GridToWorld(x, y, tileSize_));
+
+					//RedoUndo用に状態を保存
+					newState.layer1[y][x] = MapChipType::BootBlockOff;
+					newState.layer2[y][x] = MapChipType::Empty;
+
+				}
+				//オンスイッチ->オフスイッチ
+				if (t2 == MapChipType::SwitchOn) {
+					//csvMapData_の更新
+					t2 = MapChipType::SwitchOff;
+
+					//参照テーブルも更新
+					bs2->ReplaceVisual(MapChipType::SwitchOff);
+					bs2->SetWorldPosition(GridToWorld(x, y, tileSize_));
+
+					//RedoUndo用に状態を保存
+					newState.layer2[y][x] = MapChipType::SwitchOff;
 
 				}
 			}
@@ -390,46 +383,6 @@ void Map::SetAllBootBlocks(bool toOn, int gx, int gy) {
 
 	//RedoUndoに保存
 	redoUndoSystem_->AddNewHistory(newState);
-}
-
-void Map::SetBootBlockAt(int gx, int gy, bool toOn) {
-	// layer1 にある場合
-	auto& t1 = csvMapData_.layer1[gy][gx];
-	if (t1 == MapChipType::BootBlockOff && toOn) {
-		t1 = MapChipType::BootBlockOn;
-		if (Block* b = l1BootAt_[gy][gx]) {
-			b->ReplaceVisual(MapChipType::BootBlockOn);
-			b->SetWorldPosition(GridToWorld(gx, gy, tileSize_));
-		}
-		return;
-	}
-	if (t1 == MapChipType::BootBlockOn && !toOn) {
-		t1 = MapChipType::BootBlockOff;
-		if (Block* b = l1BootAt_[gy][gx]) {
-			b->ReplaceVisual(MapChipType::BootBlockOff);
-			b->SetWorldPosition(GridToWorld(gx, gy, 0.0f));
-		}
-		return;
-	}
-
-	// layer2 にある場合
-	auto& t2 = csvMapData_.layer2[gy][gx];
-	if (t2 == MapChipType::BootBlockOff && toOn) {
-		t2 = MapChipType::BootBlockOn;
-		if (Block* b = l2BootAt_[gy][gx]) {
-			b->ReplaceVisual(MapChipType::BootBlockOn);
-			b->SetWorldPosition(GridToWorld(gx, gy, tileSize_));
-		}
-		return;
-	}
-	if (t2 == MapChipType::BootBlockOn && !toOn) {
-		t2 = MapChipType::BootBlockOff;
-		if (Block* b = l2BootAt_[gy][gx]) {
-			b->ReplaceVisual(MapChipType::BootBlockOff);
-			b->SetWorldPosition(GridToWorld(gx, gy, 0.0f));
-		}
-		return;
-	}
 }
 
 bool Map::IsRenderable(MapChipType t) {

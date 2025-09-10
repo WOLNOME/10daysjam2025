@@ -27,32 +27,31 @@ void Player::Initialize(const Map& map) {
 }
 
 
-void Player::Update(Map& map)
-{
-    // 1) 補間を進める
-    UpdateTweens(kDeltaTime);
+void Player::Update(Map& map) {
+	// 1) 補間を進める
+	UpdateTweens(kDeltaTime);
 
-    // 2) ゴール上なら回転（補間中でも回す）
-    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
-    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
+	// 2) ゴール上なら回転（補間中でも回す）
+	if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
+	if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
 
-    // 3) どちらかが補間中なら入力は受け付けない
-    if (dogTween_.active || monkeyTween_.active) {
-        dog_->Update();
-        monkey_->Update();
-        return;
-    }
+	// 3) どちらかが補間中なら入力は受け付けない
+	if (dogTween_.active || monkeyTween_.active) {
+		dog_->Update();
+		monkey_->Update();
+		return;
+	}
 
-    // 4) 補間していない時だけ入力処理
-    Move(map);
+	// 4) 補間していない時だけ入力処理
+	Move(map);
 	RedoUndo(map);
 
-    // 5) 今フレームでゴールに入った直後にも回転が乗る
-    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
-    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
+	// 5) 今フレームでゴールに入った直後にも回転が乗る
+	if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
+	if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
 
-    dog_->Update();
-    monkey_->Update();
+	dog_->Update();
+	monkey_->Update();
 }
 
 void Player::Move(Map& map) {
@@ -95,39 +94,54 @@ void Player::RedoUndo(Map& map) {
 		map.blocksL1_.clear();
 		map.blocksL2_.clear();
 
-		// --- Layer1（犬のフロア） ---
+		//各レイヤーの初期化
 		for (int y = 0; y < csvMapData_.height; ++y) {
 			for (int x = 0; x < csvMapData_.width; ++x) {
-				MapChipType t = csvMapData_.layer1[y][x];
-				if (!map.IsRenderable(t)) continue;
+				MapChipType t1 = csvMapData_.layer1[y][x];
+				MapChipType t2 = csvMapData_.layer2[y][x];
+				auto pos1 = tileToWorld(x, y, 0.0f);
+				auto pos2 = tileToWorld(x, y, tileSize_);
+				auto blk1 = std::make_unique<Block>();
+				auto blk2 = std::make_unique<Block>();
+				auto blkUp = std::make_unique<Block>();
+				blk1->Initialize(t1, pos1);
+				blk2->Initialize(t2, pos2);
+				blkUp->Initialize(MapChipType::Empty, pos2);
 
-				auto pos = tileToWorld(x, y, 0.0f);
-				auto blk = std::make_unique<Block>();
-				blk->Initialize(t, pos);
-				map.blockScaleY_ = blk->GetScaleY();
-				map.blocksL1_.push_back(std::move(blk));
+				//ブーツブロック発見時
+				bool isBootBlock = false;
+				if (t1 == MapChipType::BootBlockOff) {
+					// 参照テーブルに登録
+					map.l1BootAt_[y][x] = blk1.get();
+					// レイヤー2の場所のBlockを生成しておく
+					map.l2BootAt_[y][x] = blkUp.get();
+					// ブーツブロックがある
+					isBootBlock = true;
+				}
+				//スイッチ発見時
+				if (t2 == MapChipType::SwitchOff) {
+					//参照テーブルに登録
+					map.l2SwitchAt_[y][x] = blk2.get();
+				}
+
+				// 最初に見つけた“床”で一度だけ取得（以後は固定）
+				if (!map.blockScaleCaptured_ &&
+					(t1 == MapChipType::FloorDog)) {
+					map.blockScaleY_ = blk1->GetScaleY();
+					map.blockScaleCaptured_ = true;
+				}
+				map.blocksL1_.push_back(std::move(blk1));
+				if (!isBootBlock) {
+					map.blocksL2_.push_back(std::move(blk2));
+				}
+				else {
+					map.blocksL2_.push_back(std::move(blkUp));
+				}
+
 			}
 		}
-
-		// --- Layer2（猿のフロア） ---
-		for (int y = 0; y < csvMapData_.height; ++y) {
-			for (int x = 0; x < csvMapData_.width; ++x) {
-				MapChipType t = MapChipType::Empty;
-				if (y < (int)csvMapData_.layer2.size() && x < (int)csvMapData_.layer2[y].size()) {
-					t = csvMapData_.layer2[y][x];
-				}
-				if (!map.IsRenderable(t)) continue;
-
-				auto pos = tileToWorld(x, y, tileSize_);
-
-				auto blk = std::make_unique<Block>();
-				blk->Initialize(t, pos);
-				if (t == MapChipType::BlockMonkey) {
-					map.l2BlockAt_[y][x] = blk.get();
-				}
-				map.blocksL2_.push_back(std::move(blk));
-			}
-		}
+		//blockScaleCaptured_をfalseに戻す
+		map.blockScaleCaptured_ = false;
 
 		// 犬・猿の位置を反映
 		dogGrid_ = { (int)csvMapData_.spawnDog.x,(int)csvMapData_.spawnDog.y };
@@ -137,13 +151,13 @@ void Player::RedoUndo(Map& map) {
 		SnapToWorld(Active::Monkey, map);
 		};
 
-	if (in->TriggerKey(DIK_Z)||in->TriggerPadButton(GamepadButton::LeftShoulder)) {
+	if (in->TriggerKey(DIK_Z) || in->TriggerPadButton(GamepadButton::LeftShoulder)) {
 		if (map.GetRedoUndoSystem()->Redo()) {
 			restore(map.GetRedoUndoSystem()->reflectionMapState());
 			map.csvMapData_ = map.GetRedoUndoSystem()->reflectionMapState();
 		}
 	}
-	else if (in->TriggerKey(DIK_Y)||in->TriggerPadButton(GamepadButton::RightShoulder)) {
+	else if (in->TriggerKey(DIK_Y) || in->TriggerPadButton(GamepadButton::RightShoulder)) {
 		if (map.GetRedoUndoSystem()->Undo()) {
 			restore(map.GetRedoUndoSystem()->reflectionMapState());
 			map.csvMapData_ = map.GetRedoUndoSystem()->reflectionMapState();
@@ -157,51 +171,51 @@ void Player::TryStep(Active who, int dx, int dy, Map& map) {
 	const int nx = g.x + dx;
 	const int ny = g.y + dy;
 
-    // 進行前のワールド座標（from）
-    const ActorKind k = (who == Active::Dog) ? ActorKind::Dog : ActorKind::Monkey;
-    const Vector3 from = map.WorldFromGridFor(k, g.x, g.y);
+	// 進行前のワールド座標（from）
+	const ActorKind k = (who == Active::Dog) ? ActorKind::Dog : ActorKind::Monkey;
+	const Vector3 from = map.WorldFromGridFor(k, g.x, g.y);
 
-    if (who == Active::Dog) {
-        // 先に箱がある？
-        if (map.HasBlockMonkeyAt(nx, ny)) {
-            // 押せたら前進（サルが乗っている・先がNGなら false）
-            if (map.TryPushBlockByDog(g.x, g.y, dx, dy, monkeyGrid_)) {
-                g.x = nx; g.y = ny;
-                const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
-                BeginTween(Active::Dog, from, to, moveDuration_);
-            }
-            return; // 押せなければ何もしない（めり込み防止）
-        }
+	if (who == Active::Dog) {
+		// 先に箱がある？
+		if (map.HasBlockMonkeyAt(nx, ny)) {
+			// 押せたら前進（サルが乗っている・先がNGなら false）
+			if (map.TryPushBlockByDog(g.x, g.y, dx, dy, monkeyGrid_)) {
+				g.x = nx; g.y = ny;
+				const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
+				BeginTween(Active::Dog, from, to, moveDuration_);
+			}
+			return; // 押せなければ何もしない（めり込み防止）
+		}
 
-        // 通常歩行
-        if (map.IsWalkableFor(ActorKind::Dog, nx, ny)) {
-            g.x = nx; g.y = ny;
-            const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
-            BeginTween(Active::Dog, from, to, moveDuration_);
+		// 通常歩行
+		if (map.IsWalkableFor(ActorKind::Dog, nx, ny)) {
+			g.x = nx; g.y = ny;
+			const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
+			BeginTween(Active::Dog, from, to, moveDuration_);
 
-            map.OnPlayerStepped(ActorKind::Dog, g.x, g.y , dogGrid_ , monkeyGrid_);
+			map.OnPlayerStepped(ActorKind::Dog, g.x, g.y, dogGrid_, monkeyGrid_);
 
 			//RedoUndoシステムに犬の移動を保存
 			CsvMapData newState = map.GetRedoUndoSystem()->reflectionMapState();
 			newState.spawnDog = { (float)g.x,(float)g.y };
 			map.GetRedoUndoSystem()->AddNewHistory(newState);
-        }
-        return;
-    }
+		}
+		return;
+	}
 
-    // 猿（箱は押さない）
-    if (map.IsWalkableFor(ActorKind::Monkey, nx, ny)) {
-        g.x = nx; g.y = ny;
-        const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
-        BeginTween(Active::Monkey, from, to, moveDuration_);
+	// 猿（箱は押さない）
+	if (map.IsWalkableFor(ActorKind::Monkey, nx, ny)) {
+		g.x = nx; g.y = ny;
+		const Vector3 to = map.WorldFromGridFor(k, g.x, g.y);
+		BeginTween(Active::Monkey, from, to, moveDuration_);
 
-        map.OnPlayerStepped(ActorKind::Monkey, g.x, g.y, dogGrid_, monkeyGrid_);
+		map.OnPlayerStepped(ActorKind::Monkey, g.x, g.y, dogGrid_, monkeyGrid_);
 
 		//RedoUndoシステムに猿の移動を保存
 		CsvMapData newState = map.GetRedoUndoSystem()->reflectionMapState();
 		newState.spawnMonkey = { (float)g.x,(float)g.y };
 		map.GetRedoUndoSystem()->AddNewHistory(newState);
-    }
+	}
 }
 
 void Player::SnapToWorld(Active who, const Map& map) {
@@ -213,26 +227,24 @@ void Player::SnapToWorld(Active who, const Map& map) {
 	else                    monkey_->SetWorldPosition(w);
 }
 
-void Player::BeginTween(Active who, const Vector3& from, const Vector3& to, float durationSec)
-{
-    Tween& tw = (who == Active::Dog) ? dogTween_ : monkeyTween_;
-    tw.from = from;
-    tw.to = to;
-    tw.t = 0.0f;
-    tw.duration = (std::max)(0.001f, durationSec);
-    tw.active = true;
+void Player::BeginTween(Active who, const Vector3& from, const Vector3& to, float durationSec) {
+	Tween& tw = (who == Active::Dog) ? dogTween_ : monkeyTween_;
+	tw.from = from;
+	tw.to = to;
+	tw.t = 0.0f;
+	tw.duration = (std::max)(0.001f, durationSec);
+	tw.active = true;
 }
 
-void Player::UpdateTweens(float dtSec)
-{
-    auto step = [&](Tween& tw, auto* actor) {
-        if (!tw.active) return;
-        tw.t += (dtSec / tw.duration);
-        if (tw.t >= 1.0f) { tw.t = 1.0f; tw.active = false; }
-        const float e = MyMath::EaseOutQuad(std::clamp(tw.t, 0.0f, 1.0f));
-        const Vector3 p = MyMath::Lerp(tw.from, tw.to, e);
-        actor->SetWorldPosition(p);
-        };
-    step(dogTween_, dog_.get());
-    step(monkeyTween_, monkey_.get());
+void Player::UpdateTweens(float dtSec) {
+	auto step = [&](Tween& tw, auto* actor) {
+		if (!tw.active) return;
+		tw.t += (dtSec / tw.duration);
+		if (tw.t >= 1.0f) { tw.t = 1.0f; tw.active = false; }
+		const float e = MyMath::EaseOutQuad(std::clamp(tw.t, 0.0f, 1.0f));
+		const Vector3 p = MyMath::Lerp(tw.from, tw.to, e);
+		actor->SetWorldPosition(p);
+		};
+	step(dogTween_, dog_.get());
+	step(monkeyTween_, monkey_.get());
 }
