@@ -31,5 +31,9 @@ private:
 	//テキストUI
 	std::unique_ptr<Sprite> textSprite_ = nullptr;
 	Handle textTexture_;
+
+	//操作UI
+	std::unique_ptr<Sprite> operationSprite_ = nullptr;
+	Handle operationTexture_;
 };
 

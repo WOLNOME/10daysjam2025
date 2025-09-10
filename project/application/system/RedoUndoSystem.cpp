@@ -8,7 +8,7 @@ void RedoUndoSystem::Initialize(const CsvMapData& initialMap) {
 
 	//テキスト
 	TextParam textParam;
-	textParam.text = L"[Z]・(LB):Redo [Y]・(RB):Undo";
+	textParam.text = L"[Esc]:ポーズ";
 	textParam.font = Font::UDDegitalN_B;
 	textParam.fontStyle = FontStyle::Normal;
 	textParam.size = 24.0f;
@@ -17,9 +17,24 @@ void RedoUndoSystem::Initialize(const CsvMapData& initialMap) {
 	textSprite_ = std::make_unique<Sprite>();
 	textSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("redoUndoText"), Sprite::Order::Front2);
 	textSprite_->SetTexture(textTexture_);
-	textSprite_->SetPosition({ 20,20 });
+	textSprite_->SetPosition({ 10,10 });
 	textSprite_->SetAnchorPoint({ 0.0f,0.0f });
 	textSprite_->SetIsDisplay(true);
+
+	//操作UI
+	TextParam operationParam;
+	operationParam.text = L"[WASD]:移動  \n[Z]:ひとつ戻る\n[Y]:ひとつ進む\n[Q]:犬を操作\n[E]猿を操作";
+	operationParam.font = Font::UDDegitalN_B;
+	operationParam.fontStyle = FontStyle::Normal;
+	operationParam.size = 24.0f;
+	operationParam.color = { 1.0f,1.0f,1.0f,1.0f };
+	operationTexture_ = TextTextureManager::GetInstance()->LoadTextTexture(operationParam);
+	operationSprite_ = std::make_unique<Sprite>();
+	operationSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("operationUI"), Sprite::Order::Front2);
+	operationSprite_->SetTexture(operationTexture_);
+	operationSprite_->SetPosition({ 10,560 });
+	operationSprite_->SetAnchorPoint({ 0.0f,0.0f });
+	operationSprite_->SetIsDisplay(true);
 
 }
 
