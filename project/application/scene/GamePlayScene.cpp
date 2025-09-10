@@ -16,8 +16,9 @@ void GamePlayScene::Initialize() {
 	Object3dManager::GetInstance()->SetSceneLight(sceneLight_.get());
 
 	map_ = std::make_unique<Map>();
+	//map_->Initialize("Dog_Tutorial");
+	map_->Initialize("Stage_20");
 
-	map_->Initialize("Dog_Tutorial");
 	StageCamera stageCamera = map_->GetStageCameraVal();
 	camera_->worldTransform.translate = stageCamera.overLooking.position;
 	camera_->worldTransform.rotate = stageCamera.overLooking.rotate;
