@@ -23,6 +23,10 @@ void TutorialScene::Initialize() {
 	//ポーズシステムの生成と初期化
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();
+
+	//チュートリアルシステムの初期化
+	tutorialSystem_ = std::make_unique<TutorialSystem>();
+	tutorialSystem_->Initialize();
 }
 
 void TutorialScene::Finalize() {
@@ -50,6 +54,9 @@ void TutorialScene::Update() {
 
 	//プレイヤー更新
 	player_->Update(*map_);
+
+	//チュートリアルシステム更新
+	tutorialSystem_->Update();
 }
 
 void TutorialScene::DebugWithImGui() {

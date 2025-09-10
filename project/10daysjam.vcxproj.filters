@@ -139,7 +139,6 @@
     <ClCompile Include="application\system\PoseSystem.cpp" />
     <ClCompile Include="application\system\RedoUndoSystem.cpp" />
     <ClCompile Include="application\system\TutorialSystem.cpp" />
-    <ClCompile Include="application\ui\TextCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -268,7 +267,6 @@
     <ClInclude Include="application\map\StageCamera.h" />
     <ClInclude Include="application\system\RedoUndoSystem.h" />
     <ClInclude Include="application\system\TutorialSystem.h" />
-    <ClInclude Include="application\ui\TextCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />

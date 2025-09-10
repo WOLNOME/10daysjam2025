@@ -9,6 +9,7 @@
 #include "application/character/Player.h"
 
 #include <application/system/PoseSystem.h>
+#include <application/system/TutorialSystem.h>
 
 class TutorialScene : public BaseScene {
 public:
@@ -41,5 +42,8 @@ private://メンバ変数
 
 	//ポーズシステム
 	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
+
+	//チュートリアルシステム
+	std::unique_ptr<TutorialSystem> tutorialSystem_ = std::make_unique<TutorialSystem>();
 };
 
