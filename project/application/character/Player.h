@@ -70,6 +70,19 @@ private:
 	void BeginTween(Active who, const Vector3& from, const Vector3& to, float durationSec);
 	void UpdateTweens(float dtSec);
 
+	struct BobState {
+		float time = 0.0f;  // 経過時間
+		float lastOffset = 0.0f;  // 直前フレームのyオフセット
+	};
 
+	BobState dogBob_;
+	BobState monkeyBob_;
+
+	// 振幅と速度（ゆっくりめ）
+	float bobAmplitude_ = 0.6f;  // 上下幅（ワールド座標）
+	float bobFreqHz_ = 0.25f;   // 周波数（Hz）
+
+	// ボビング適用
+	void ApplyGoalBobbing(Map& map, float dtSec);
 };
 

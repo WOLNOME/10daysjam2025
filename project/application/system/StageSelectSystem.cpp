@@ -35,6 +35,7 @@ void StageSelectSystem::Initialize() {
 	viewIndex_ = static_cast<float>(selectedIndex_);
 	tweening_ = false;
 
+
 	//移動音生成
 	moveSE_ = std::make_unique<Audio>();
 	moveSE_->Initialize("cursor.wav");
