@@ -3,6 +3,7 @@
 #include <Input.h>
 #include "MyMath.h"
 #include <algorithm>
+#include <cmath>
 
 void Player::Initialize(const Map& map) {
 	// イヌ初期化
@@ -33,8 +34,11 @@ void Player::Update(Map& map)
     UpdateTweens(kDeltaTime);
 
     // 2) ゴール上なら回転（補間中でも回す）
-    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
-    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
+    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.01f); }
+    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.01f); }
+
+	// 上下ボビング（補間中にも反映させる）
+	ApplyGoalBobbing(map, kDeltaTime);
 
     // 3) どちらかが補間中なら入力は受け付けない
     if (dogTween_.active || monkeyTween_.active) {
@@ -48,8 +52,11 @@ void Player::Update(Map& map)
 	RedoUndo(map);
 
     // 5) 今フレームでゴールに入った直後にも回転が乗る
-    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.03f); }
-    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.03f); }
+    if (map.IsGoalFor(ActorKind::Dog, dogGrid_.x, dogGrid_.y)) { dog_->AddYaw(-0.01f); }
+    if (map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y)) { monkey_->AddYaw(-0.01f); }
+
+	// 静止時にも常にボビングを反映
+	ApplyGoalBobbing(map, kDeltaTime);
 
     dog_->Update();
     monkey_->Update();
@@ -235,4 +242,40 @@ void Player::UpdateTweens(float dtSec)
         };
     step(dogTween_, dog_.get());
     step(monkeyTween_, monkey_.get());
+}
+
+void Player::ApplyGoalBobbing(Map& map, float dtSec)
+{
+	auto apply = [&](Active who, CharacterBase* actor, GridPos& g, Tween& tw, BobState& bob, ActorKind kind)
+		{
+			const bool onGoal = map.IsGoalFor(kind, g.x, g.y);
+
+			// ベース位置を決める（補間中は現在位置＝補間後位置、静止時はグリッドから算出）
+			Vector3 basePos = tw.active
+				? actor->GetWorldPosition()
+				: map.WorldFromGridFor(kind, g.x, g.y);
+
+			if (!onGoal) {
+				// ゴールから外れたらオフセットを除去し、状態リセット
+				basePos.y += 0.0f;
+				actor->SetWorldPosition(basePos);
+				bob.time = 0.0f;
+				bob.lastOffset = 0.0f;
+				return;
+			}
+
+			// ゴール上：時間を進め、sin波で上下オフセット
+			bob.time += dtSec;
+			constexpr float kTwoPi = 6.28318530718f;
+			const float newOffset = bobAmplitude_ * std::sinf(kTwoPi * bobFreqHz_ * bob.time);
+
+			Vector3 p = basePos;      // 累積しない：毎フレーム「ベース＋新オフセット」で上書き
+			p.y += newOffset;
+			actor->SetWorldPosition(p);
+
+			bob.lastOffset = newOffset;
+		};
+
+	apply(Active::Dog, dog_.get(), dogGrid_, dogTween_, dogBob_, ActorKind::Dog);
+	apply(Active::Monkey, monkey_.get(), monkeyGrid_, monkeyTween_, monkeyBob_, ActorKind::Monkey);
 }
