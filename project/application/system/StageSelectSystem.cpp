@@ -3,6 +3,8 @@
 #include <SpriteManager.h>
 #include <TextureManager.h>
 #include <TextTextureManager.h>
+#include <string>
+#include <application/scene/GamePlayScene.h>
 
 void StageSelectSystem::Initialize() {
 	//インプット
@@ -63,15 +65,29 @@ void StageSelectSystem::Update() {
 		LayoutStageSprites();
 	}
 
-
-	//スペースキーorAボタンで次のシーンへ(後々選択できるようにする)
 	if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
+		// 1-based のステージ名を作る（選択 0 → "Stage_1"）
+		const int stageNo = selectedIndex_ + 1;
+		std::string stageName = "Stage_" + std::to_string(stageNo);
+
+		// GamePlayScene へ渡す
+		GamePlayScene::SetPendingStageName(stageName);
+
+		// シーン遷移
 		if (SceneManager::GetInstance()->SetNextScene("GAMEPLAY")) {
 			isSceneChanging_ = true;
-			//決定音再生
 			decideSE_->Play();
 		}
 	}
+
+	////スペースキーorAボタンで次のシーンへ(後々選択できるようにする)
+	//if ((input_->TriggerKey(DIK_SPACE) || input_->TriggerPadButton(GamepadButton::ButtonA)) && !isSceneChanging_) {
+	//	if (SceneManager::GetInstance()->SetNextScene("GAMEPLAY")) {
+	//		isSceneChanging_ = true;
+	//		//決定音再生
+	//		decideSE_->Play();
+	//	}
+	//}
 	//エスケープキーorBボタンで前のシーンへ
 	if ((input_->TriggerKey(DIK_ESCAPE) || input_->TriggerPadButton(GamepadButton::ButtonB)) && !isSceneChanging_) {
 		if (SceneManager::GetInstance()->SetNextScene("MENU")) {

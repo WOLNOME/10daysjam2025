@@ -47,7 +47,7 @@ private://メンバ変数
 
 
 	// ==== ステージ選択UI ====
-	static constexpr int kStageCount_ = 30;
+	static constexpr int kStageCount_ = 20;
 	int selectedIndex_ = 0;                 // 0..29
 	float yPos_ = 600.0f;                   // 1280x720 の画面で下寄せに表示
 	float spacing_ = 280.0f;                // 等間隔ピッチ（画面例のように3つくらい見える間隔）

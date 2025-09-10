@@ -31,6 +31,11 @@ public:
 		if (character_) { character_->worldTransform.rotate.y += delta; }
 	}
 
+	float GetYaw() const { return character_->worldTransform.rotate.y; }
+	void  SetYaw(float yaw) {
+		character_->worldTransform.rotate.y = yaw;
+		character_->worldTransform.UpdateMatrix();   // 行列の更新が必要な場合
+	}
 
 protected:
 

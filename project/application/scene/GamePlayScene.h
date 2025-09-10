@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <DevelopCamera.h>
+#include <string>
 
 //アプリケーション
 #include <application/system/PoseSystem.h>
@@ -34,6 +35,8 @@ public:
 	/// </summary>
 	void DebugWithImGui() override;
 
+	static void SetPendingStageName(const std::string& name) { pendingStageName_ = name; }
+
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
@@ -50,7 +53,9 @@ private://メンバ変数
 	//ポーズシステム
 	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
 
+
 	// 背景平面
 	std::unique_ptr<BackPlane> backPlane_ = nullptr;
+	static std::string pendingStageName_;  // StageSelect から受け取る一時引数
 };
 
