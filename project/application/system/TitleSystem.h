@@ -5,6 +5,9 @@
 #include <Sprite.h>
 #include <Handle.h>
 #include <memory>
+
+#include "engine/3d/DevelopCamera.h"
+#include "application/map/BackPlane.h"
 class TitleSystem {
 public:
 	//初期化
@@ -54,6 +57,22 @@ private://メンバ変数
 
 	//決定音
 	std::unique_ptr<Audio> decideSE_ = nullptr;
+
+	// 背景平面
+	std::unique_ptr<BackPlane> backPlane_ = nullptr;
+
+	// イヌ
+	std::unique_ptr<Object3d> dog_ = nullptr;
+	// サル
+	std::unique_ptr<Object3d> monkey_ = nullptr;
+
+	// 犬ブロック
+	std::unique_ptr<Object3d> dogBlock_ = nullptr;
+	// 猿ブロック
+	std::unique_ptr<Object3d> monkeyBlock_ = nullptr;
+
+	float dogBaseY_ = 0.0f;
+	float dogTime_ = 0.0f;
 
 };
 
