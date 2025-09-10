@@ -7,7 +7,6 @@ void TutorialSystem::Initialize() {
 	textList_.push_back(L"操作方法");
 	textList_.push_back(L"WASD：移動");
 	textList_.push_back(L"Qキー：犬を操作 Eキー:猿を操作");
-	textList_.push_back(L"Rキー：リセット");
 	textList_.push_back(L"Zキー：ひとつ戻る Yキー:ひとつ進む");
 	textList_.push_back(L"Escapeキー：ポーズ");
 	textList_.push_back(L"犬と猿を交互に操作して、ゴールを目指そう！");
