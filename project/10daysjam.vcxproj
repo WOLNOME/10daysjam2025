@@ -188,6 +188,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\system\StageSelectSystem.cpp" />
     <ClCompile Include="application\system\PoseSystem.cpp" />
     <ClCompile Include="application\system\RedoUndoSystem.cpp" />
+    <ClCompile Include="application\system\TutorialSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\map\Block.h" />
@@ -283,6 +284,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\system\PoseSystem.h" />
     <ClInclude Include="application\map\StageCamera.h" />
     <ClInclude Include="application\system\RedoUndoSystem.h" />
+    <ClInclude Include="application\system\TutorialSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

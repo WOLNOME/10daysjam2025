@@ -1,5 +1,6 @@
 #pragma once
 #include <Input.h>
+#include <MyMath.h>
 #include <Audio.h>
 #include <Sprite.h>
 #include <Handle.h>
@@ -18,6 +19,9 @@ public:
 	//ImGuiデバッグ
 	void DebugWithImGui();
 
+private://非公開メンバ関数
+	void UpdateUI();
+
 private://メンバ変数
 	//インプット
 	Input* input_ = nullptr;
@@ -25,12 +29,28 @@ private://メンバ変数
 	//背景
 	std::unique_ptr<Sprite> backSprite_ = nullptr;
 	uint32_t backTexture_ = 0u;
+	//犬画像
+	std::unique_ptr<Sprite> dogSprite_ = nullptr;
+	uint32_t dogTexture_;
+	//サル画像
+	std::unique_ptr<Sprite> monkeySprite_ = nullptr;
+	uint32_t monkeyTexture_;
+	const float jumpTime_ = 0.3f;
+	float jumpTimer_ = 0.0f;
+	bool isJumping_ = false;
+
 	//タイトル文字
 	std::unique_ptr<Sprite> titleTextSprite_ = nullptr;
 	Handle titleTextTexture_;
+	const float fallTime_ = 2.0f;
+	float fallTimer_ = 0.0f;
+	bool isFalling_ = true;
 	//次へ進むUI
 	std::unique_ptr<Sprite> nextUITextSprite_ = nullptr;
 	Handle nextUITextTexture_;
+	const float oneWayTime_ = 2.0f;
+	float oneWayTimer_ = 0.0f;
+	bool isAlphaUp_ = true;
 
 	//シーン遷移中判定フラグ
 	bool isSceneChanging_ = false;
