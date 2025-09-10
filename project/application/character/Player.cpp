@@ -78,6 +78,7 @@ void Player::Move(Map& map) {
 	else if (in->TriggerKey(DIK_D) || in->TriggerKey(DIK_RIGHT)) { dx = 1; }
 
 	if (dx != 0 || dy != 0) {
+		FaceTowards(active_, dx, dy);
 		TryStep(active_, dx, dy, map);
 	}
 }
@@ -278,4 +279,18 @@ void Player::ApplyGoalBobbing(Map& map, float dtSec)
 
 	apply(Active::Dog, dog_.get(), dogGrid_, dogTween_, dogBob_, ActorKind::Dog);
 	apply(Active::Monkey, monkey_.get(), monkeyGrid_, monkeyTween_, monkeyBob_, ActorKind::Monkey);
+}
+
+void Player::FaceTowards(Active who, int dx, int dy)
+{
+	if (dx == 0 && dy == 0) return;
+
+	float yaw = std::atan2f(-static_cast<float>(dx), static_cast<float>(dy));
+
+	yaw += modelYawOffset_;  // モデルの前方向が+Zでない場合の補正があれば足す
+
+	CharacterBase* actor = (who == Active::Dog)
+		? static_cast<CharacterBase*>(dog_.get())
+		: static_cast<CharacterBase*>(monkey_.get());
+	actor->SetYaw(yaw);
 }
