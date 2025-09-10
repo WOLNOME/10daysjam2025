@@ -138,6 +138,7 @@
     <ClCompile Include="application\system\StageSelectSystem.cpp" />
     <ClCompile Include="application\system\PoseSystem.cpp" />
     <ClCompile Include="application\system\RedoUndoSystem.cpp" />
+    <ClCompile Include="application\map\BackPlane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -265,6 +266,7 @@
     <ClInclude Include="application\map\MapTypes.h" />
     <ClInclude Include="application\map\StageCamera.h" />
     <ClInclude Include="application\system\RedoUndoSystem.h" />
+    <ClInclude Include="application\map\BackPlane.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli" />
