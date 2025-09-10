@@ -94,5 +94,6 @@ private:
 
 	//パーティクル
 	std::unique_ptr<Particle> particle_ = nullptr;
+	bool clearEffectSpawned_ = false;
 };
 
