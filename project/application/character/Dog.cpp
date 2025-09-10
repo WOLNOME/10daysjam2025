@@ -4,7 +4,7 @@ void Dog::Initialize()
 {
 	//3Dオブジェクトの生成と初期化
 	character_ = std::make_unique<Object3d>();
-	character_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Dog"), "bunny");
+	character_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Dog"), "dog");
 
 	//character_->worldTransform.translate = { 0.0f,0.0f,0.0f };
 }
