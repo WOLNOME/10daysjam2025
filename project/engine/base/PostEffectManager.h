@@ -112,12 +112,14 @@ private:
 	//RTVのディスクリプタハンドル
 	uint32_t rtvIndex = 0;
 	//レンダーテクスチャのクリアカラー
-	const Vector4 kRenderTragetClearValue = Vector4(0, 0, 1, 1);
+	const Vector4 kRenderTragetClearValue = Vector4(0.5f, 0.5f, 0.5f, 1);
 
 	//現在適用しているポストエフェクトの種類
 	PostEffectKind currentPostEffectKind = PostEffectKind::None;
 
 	//ポストエフェクトのリソース
 	PostEffectResource postEffectResource;
+
+	
 };
 
