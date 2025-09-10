@@ -4,6 +4,7 @@
 #include <Sprite.h>
 #include <Handle.h>
 #include <memory>
+#include "application/map/BackPlane.h"
 class MenuSystem {
 private://列挙体
 	enum class SelectState {
@@ -48,5 +49,16 @@ private://メンバ変数
 	std::unique_ptr<Audio> moveSE_ = nullptr;
 	//決定音
 	std::unique_ptr<Audio> decideSE_ = nullptr;
+
+	// 背景平面
+	std::unique_ptr<BackPlane> backPlane_ = nullptr;
+
+	// イヌ
+	std::unique_ptr<Object3d> dog_ = nullptr;
+	// サル
+	std::unique_ptr<Object3d> monkey_ = nullptr;
+
+
+
 };
 
