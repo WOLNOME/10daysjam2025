@@ -5,6 +5,7 @@
 #include <Handle.h>
 #include <memory>
 #include "MyMath.h"
+#include <application/map/BackPlane.h>
 
 class StageSelectSystem {
 public:
@@ -75,6 +76,9 @@ private://メンバ変数
 	int fastIntervalFrames_ = 2;    // 0.033s
 	int acceleratedThreshold_ = 45; // 0.75s 以上で加速
 
+
+	//背景
+	std::unique_ptr<BackPlane> backPlane_ = nullptr;
 
 };
 

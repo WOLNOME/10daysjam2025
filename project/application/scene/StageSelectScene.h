@@ -5,6 +5,7 @@
 //アプリケーション
 #include <application/system/StageSelectSystem.h>
 
+
 class StageSelectScene : public BaseScene {
 public:
 	/// <summary>
@@ -31,6 +32,8 @@ private://メンバ変数
 
 	//システム
 	std::unique_ptr<StageSelectSystem> stageSelectSystem_ = nullptr;
+
+	
 
 };
 

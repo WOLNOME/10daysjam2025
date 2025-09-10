@@ -6,7 +6,7 @@ void BackPlane::Initialize() {
 	floor_ = std::make_unique<Object3d>();
 	floor_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Floor"),"floor");
 
-	floor_->worldTransform.scale = { 7.0f,7.0f,7.0f };
+	floor_->worldTransform.scale = { 8.0f,8.0f,8.0f };
 	floor_->worldTransform.translate = { 0.0f,-0.5f,0.0f };
 	
 }

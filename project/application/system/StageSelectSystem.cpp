@@ -10,11 +10,11 @@ void StageSelectSystem::Initialize() {
 	//インプット
 	input_ = Input::GetInstance();
 	//背景スプライト生成
-	backSprite_ = std::make_unique<Sprite>();
+	/*backSprite_ = std::make_unique<Sprite>();
 	backTexture_ = TextureManager::GetInstance()->LoadTexture("black.png");
 	backSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("back"), Sprite::Order::Back0, backTexture_);
 	backSprite_->SetPosition({ 0,0 });
-	backSprite_->SetAnchorPoint({ 0,0 });
+	backSprite_->SetAnchorPoint({ 0,0 });*/
 	//セレクトテキストスプライト生成
 	menuTextSprite_ = std::make_unique<Sprite>();
 	TextParam menuTextParam;
@@ -44,6 +44,11 @@ void StageSelectSystem::Initialize() {
 	//決定音生成
 	decideSE_ = std::make_unique<Audio>();
 	decideSE_->Initialize("decide.wav");
+
+	//背景
+	backPlane_ = std::make_unique<BackPlane>();
+	backPlane_->Initialize();
+
 }
 
 void StageSelectSystem::Update() {
