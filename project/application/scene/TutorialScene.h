@@ -1,10 +1,15 @@
 #pragma once
 #include "BaseScene.h"
+#include "DevelopCamera.h"
 #include "GameCamera.h"
 #include <memory>
 
 //アプリケーション
+#include "application/map/Map.h"
+#include "application/character/Player.h"
+
 #include <application/system/PoseSystem.h>
+#include <application/system/TutorialSystem.h>
 
 class TutorialScene : public BaseScene {
 public:
@@ -28,9 +33,17 @@ public:
 private://メンバ変数
 	Input* input_ = nullptr;
 	//開発用カメラ
-	std::unique_ptr<GameCamera> camera_ = nullptr;
+	std::unique_ptr<DevelopCamera> camera_ = nullptr;
+
+	//マップ
+	std::unique_ptr<Map> map_ = nullptr;
+	//プレイヤー
+	std::unique_ptr<Player> player_ = nullptr;
 
 	//ポーズシステム
 	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
+
+	//チュートリアルシステム
+	std::unique_ptr<TutorialSystem> tutorialSystem_ = std::make_unique<TutorialSystem>();
 };
 
