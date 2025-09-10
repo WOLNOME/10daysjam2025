@@ -181,11 +181,11 @@ void TitleSystem::UpdateUI() {
 		}
 
 		if (!isAlphaUp_) {
-			const float alpha = MyMath::Lerp(1.0f, 0.0f, MyMath::EaseInSine(oneWayTimer_ / oneWayTime_));
+			const float alpha = MyMath::Lerp(1.0f, 0.0f, MyMath::EaseOutSine(oneWayTimer_ / oneWayTime_));
 			nextUITextSprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 		}
 		else {
-			const float alpha = MyMath::Lerp(0.0f, 1.0f, MyMath::EaseInSine(oneWayTimer_ / oneWayTime_));
+			const float alpha = MyMath::Lerp(0.0f, 1.0f, MyMath::EaseOutSine(oneWayTimer_ / oneWayTime_));
 			nextUITextSprite_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 		}
 	}
