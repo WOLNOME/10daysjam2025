@@ -281,6 +281,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\scene\TutorialScene.h" />
     <ClInclude Include="application\system\StageSelectSystem.h" />
     <ClInclude Include="application\system\PoseSystem.h" />
+    <ClInclude Include="application\map\StageCamera.h" />
     <ClInclude Include="application\system\RedoUndoSystem.h" />
     <ClInclude Include="application\system\TutorialSystem.h" />
     <ClInclude Include="application\ui\TextCreator.h" />

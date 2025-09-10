@@ -265,6 +265,7 @@
     <ClInclude Include="application\system\StageSelectSystem.h" />
     <ClInclude Include="application\system\PoseSystem.h" />
     <ClInclude Include="application\map\MapTypes.h" />
+    <ClInclude Include="application\map\StageCamera.h" />
     <ClInclude Include="application\system\RedoUndoSystem.h" />
     <ClInclude Include="application\system\TutorialSystem.h" />
     <ClInclude Include="application\ui\TextCreator.h" />

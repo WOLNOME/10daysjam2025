@@ -39,14 +39,15 @@ public:
 	// ゴール判定（who のレイヤで (gx,gy) がゴールなら true）
 	bool IsGoalFor(ActorKind who, int gx, int gy) const;
 
+
+	StageCamera GetStageCameraVal() { return stageCamera_; }
+
 	//モデルのあるタイルかどうか(PlayerでもRedoUndo処理で使うためpublic関数にした)
 	static bool IsRenderable(MapChipType t);
 	// プレイヤーが (gx,gy) に入ったときのトグル処理（踏んだ瞬間だけ呼ぶ）
-	void OnPlayerStepped(ActorKind who, int gx, int gy);
+	void OnPlayerStepped(ActorKind who, int gx, int gy, const GridPos& dogPos, const GridPos& monkeyPos);
 
-	void SetAllBootBlocks(bool toOn);
-	void SetBootBlockAt(int gx, int gy, bool toOn);
-
+	void SetAllBootBlocks(bool toOn, int gx, int gy);
 
 	// layer2 上の BlockMonkey の配置 -> Block* を保持
 	// サイズは [height][width]。BlockMonkey があるセルに対応する Block* を格納（なければ nullptr）
@@ -56,21 +57,26 @@ public:
 	std::vector<std::unique_ptr<Block>> blocksL1_;
 	// 二層
 	std::vector<std::unique_ptr<Block>> blocksL2_;
+
 	// 床ブロックの高さ（scale.y）
 	float   blockScaleY_ = 1.0f;
 	CsvMapData csvMapData_;
+
+	// BootBlock のブロック参照テーブル（描画オブジェクトのYを切替用）
+	std::vector<std::vector<Block*>> l1BootAt_;
+	std::vector<std::vector<Block*>> l2BootAt_;
+
+	// スイッチ(Off/On)のブロック参照テーブル
+	std::vector<std::vector<Block*>> l2SwitchAt_;
+
+	bool blockScaleCaptured_ = false;
 
 private:
 
 	//RedoUndoシステム
 	std::unique_ptr<RedoUndoSystem> redoUndoSystem_ = nullptr;
 
-	// BootBlock のブロック参照テーブル（描画オブジェクトのYを切替用）
-	std::vector<std::vector<Block*>> l1BootAt_;
-	std::vector<std::vector<Block*>> l2BootAt_;
-
-	bool blockScaleCaptured_ = false;
-;
+	;
 	// タイル→ワールド変換
 	float   tileSize_ = 2.0f;
 	Vector3 origin_ = { 0,0,0 };
@@ -81,5 +87,9 @@ private:
 	std::optional<Vector3> FindStartOnLayer(
 		const std::vector<std::vector<MapChipType>>& layer,
 		MapChipType target, float yOffset) const;
+
+	// ステージカメラ
+	StageCamera stageCamera_;
+	int cameraType_ = 0; 
 };
 
