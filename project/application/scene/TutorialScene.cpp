@@ -17,6 +17,10 @@ void TutorialScene::Initialize() {
 
 	map_ = std::make_unique<Map>();
 	map_->Initialize("Monkey_Tutorial");
+	StageCamera stageCamera = map_->GetStageCameraVal();
+	camera_->worldTransform.translate = stageCamera.overLooking.position;
+	camera_->worldTransform.rotate = stageCamera.overLooking.rotate;
+
 	player_ = std::make_unique<Player>();
 	player_->Initialize(*map_);
 

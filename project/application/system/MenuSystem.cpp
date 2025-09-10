@@ -8,12 +8,12 @@ void MenuSystem::Initialize() {
 	//インプット
 	input_ = Input::GetInstance();
 	//背景スプライト生成
-	backSprite_ = std::make_unique<Sprite>();
+	/*backSprite_ = std::make_unique<Sprite>();
 	backTexture_ = TextureManager::GetInstance()->LoadTexture("souko.png");
 	backSprite_->Initialize(SpriteManager::GetInstance()->GenerateName("back"), Sprite::Order::Back0, backTexture_);
 	backSprite_->SetSize({ 1280.0f,720.0f });
 	backSprite_->SetPosition({ 0,0 });
-	backSprite_->SetAnchorPoint({ 0,0 });
+	backSprite_->SetAnchorPoint({ 0,0 });*/
 	//メニューテキストスプライト生成
 	menuTextSprite_ = std::make_unique<Sprite>();
 	TextParam menuTextParam;
@@ -58,9 +58,28 @@ void MenuSystem::Initialize() {
 	//決定音生成
 	decideSE_ = std::make_unique<Audio>();
 	decideSE_->Initialize("decide.wav");
+
+	//背景平面の生成と初期化
+	backPlane_ = std::make_unique<BackPlane>();
+	backPlane_->Initialize();
+
+	// イヌの生成と初期化
+	dog_ = std::make_unique<Object3d>();
+	dog_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Dog"), "dog");
+	dog_->worldTransform.scale = { 0.3f,0.3f,0.3f };
+	dog_->worldTransform.translate = { 0.15f,-0.49f,2.85f };
+	dog_->worldTransform.rotate = { 0.0f,0.92f,0.0f };
+	
+	// サルの生成と初期化
+	monkey_ = std::make_unique<Object3d>();
+	monkey_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("Monkey"), "monkey");
+	monkey_->worldTransform.scale = { 0.3f,0.3f,0.3f };
+	monkey_->worldTransform.translate = { 0.75f,-0.56f,2.74f };
+	monkey_->worldTransform.rotate = { 0.0f,0.97f,0.0f };
 }
 
 void MenuSystem::Update() {
+
 	//上下キーで選択状態変更
 	if ((input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP) || input_->TriggerPadButton(GamepadButton::DPadUp)) && !isSceneChanging_) {
 		if (selectState_ == SelectState::Tutorial) {
@@ -119,6 +138,23 @@ void MenuSystem::Update() {
 			decideSE_->Play();
 		}
 	}
+	dog_->worldTransform.UpdateMatrix();
+	monkey_->worldTransform.UpdateMatrix();
+	
+
+	// 犬猿ブロックのimgui
+#ifdef _DEBUG
+	ImGui::Begin("DogMonkey");
+	ImGui::DragFloat3("Dog Translate", &dog_->worldTransform.translate.x, 0.01f);
+	ImGui::DragFloat3("Dog Rotate", &dog_->worldTransform.rotate.x, 0.01f);
+	ImGui::DragFloat3("Dog Scale", &dog_->worldTransform.scale.x, 0.01f);
+	ImGui::Separator();
+	ImGui::DragFloat3("Monkey Translate", &monkey_->worldTransform.translate.x, 0.01f);
+	ImGui::DragFloat3("Monkey Rotate", &monkey_->worldTransform.rotate.x, 0.01f);
+	ImGui::DragFloat3("Monkey Scale", &monkey_->worldTransform.scale.x, 0.01f);
+	
+	ImGui::End();
+#endif // _DEBUG
 }
 
 void MenuSystem::DebugWithImGui() {
