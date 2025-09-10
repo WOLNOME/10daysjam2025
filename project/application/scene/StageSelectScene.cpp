@@ -18,6 +18,9 @@ void StageSelectScene::Initialize() {
 	//システム生成と初期化
 	stageSelectSystem_ = std::make_unique<StageSelectSystem>();
 	stageSelectSystem_->Initialize();
+
+	
+	
 }
 
 void StageSelectScene::Finalize() {
