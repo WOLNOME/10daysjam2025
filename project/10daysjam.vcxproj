@@ -111,6 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\map\CsvLoader.cpp" />
     <ClCompile Include="application\character\CharacterBase.cpp" />
     <ClCompile Include="application\character\Dog.cpp" />
+    <ClCompile Include="application\map\BackPlane.cpp" />
     <ClCompile Include="engine\3d\AnimationModel.cpp" />
     <ClCompile Include="engine\3d\CombinedParticle.cpp" />
     <ClCompile Include="engine\3d\LevelLoader.cpp" />
@@ -194,6 +195,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\map\CsvLoader.h" />
     <ClInclude Include="application\character\CharacterBase.h" />
     <ClInclude Include="application\character\Dog.h" />
+    <ClInclude Include="application\map\BackPlane.h" />
     <ClInclude Include="engine\3d\AnimationModel.h" />
     <ClInclude Include="engine\3d\CombinedParticle.h" />
     <ClInclude Include="engine\3d\LevelLoader.h" />

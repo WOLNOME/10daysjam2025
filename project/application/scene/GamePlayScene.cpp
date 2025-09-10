@@ -41,6 +41,9 @@ void GamePlayScene::Initialize() {
 	poseSystem_ = std::make_unique<PoseSystem>();
 	poseSystem_->Initialize();
 	
+	//背景平面の生成と初期化
+	backPlane_ = std::make_unique<BackPlane>();
+	backPlane_->Initialize();
 	
 }
 
@@ -68,6 +71,8 @@ void GamePlayScene::Update() {
 	camera_->Update();
 
 	player_->Update(*map_);
+
+	backPlane_->Update();
 }
 
 void GamePlayScene::DebugWithImGui() {

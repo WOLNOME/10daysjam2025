@@ -13,6 +13,8 @@
 //アプリケーション
 #include <application/system/PoseSystem.h>
 #include "application/character/Player.h"
+#include "Particle.h"
+#include "application/map/BackPlane.h"
 
 class GamePlayScene : public BaseScene {
 public:
@@ -51,6 +53,9 @@ private://メンバ変数
 	//ポーズシステム
 	std::unique_ptr<PoseSystem> poseSystem_ = nullptr;
 
+
+	// 背景平面
+	std::unique_ptr<BackPlane> backPlane_ = nullptr;
 	static std::string pendingStageName_;  // StageSelect から受け取る一時引数
 };
 
