@@ -107,8 +107,8 @@ void Player::Update(Map& map) {
 
 void Player::Move(Map& map) {
 	// 操作対象の切替（必要なら）
-	if (Input::GetInstance()->TriggerKey(DIK_1)) active_ = Active::Dog;
-	if (Input::GetInstance()->TriggerKey(DIK_2)) active_ = Active::Monkey;
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) active_ = Active::Dog;
+	if (Input::GetInstance()->TriggerKey(DIK_E)) active_ = Active::Monkey;
 
 	// 押下1回 → 1マス
 	int dx = 0, dy = 0;
