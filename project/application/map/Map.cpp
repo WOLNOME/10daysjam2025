@@ -235,7 +235,6 @@ bool Map::TryPushBlockByDog(int dogGx, int dogGy, int dx, int dy, const GridPos&
 	newState.spawnDog = { (float)nx,(float)ny };
 	//箱の新位置に箱をセット
 	newState.layer2[ty][tx] = MapChipType::BlockMonkey;
-	redoUndoSystem_->AddNewHistory(newState);
 
 	return true;
 }
