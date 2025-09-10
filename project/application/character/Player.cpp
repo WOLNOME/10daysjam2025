@@ -29,6 +29,12 @@ void Player::Initialize(const Map& map) {
 
 	clearTimerSec_ = 0.0f;
 	clearQueued_ = false;
+
+	//パーティクルの生成・初期化
+	/*particle_ = std::make_unique<Particle>();
+	particle_->Initialize(ParticleManager::GetInstance()->GenerateName("Particle"), "clear");
+	particle_->emitter_.transform.translate = { 3.5f,3.0f,1.0f };*/
+	/*particle_->Initialize(ParticleManager::GetInstance()->GenerateName("Particle"), "clear");*/
 }
 
 
@@ -66,7 +72,23 @@ void Player::Update(Map& map) {
 	const bool monkeyOnGoal = map.IsGoalFor(ActorKind::Monkey, monkeyGrid_.x, monkeyGrid_.y);
 
 	if (dogOnGoal && monkeyOnGoal) {
-		clearTimerSec_ += kDeltaTime;   // MyMathのΔtを使用中ならそのままでOK
+		clearTimerSec_ += kDeltaTime;
+
+		// ★ 追加：初回だけパーティクルを出す
+		if (!clearEffectSpawned_) {
+			// 2人のちょうど中間に出す（少し上にオフセット）
+			Vector3 pd = dog_->GetWorldPosition();
+			Vector3 pm = monkey_->GetWorldPosition();
+			Vector3 pos{ (pd.x + pm.x) * 0.5f, (pd.y + pm.y) * 0.5f + 1.0f, (pd.z + pm.z) * 0.5f };
+
+			if (!particle_) { particle_ = std::make_unique<Particle>(); }
+			// ← Initialize でエミッタが起動する設計のため、ここで初期化＆配置
+			particle_->Initialize(ParticleManager::GetInstance()->GenerateName("Clear"), "clear");
+			particle_->emitter_.transform.translate = pos;
+
+			clearEffectSpawned_ = true;
+		}
+
 		if (!clearQueued_ && clearTimerSec_ >= clearWaitSec_) {
 			// ★ ステージセレクトへ戻る（シーン名はあなたの管理名に合わせて）
 			if (SceneManager::GetInstance()->SetNextScene("STAGESELECT")) {
